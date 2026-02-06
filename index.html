@@ -230,7 +230,7 @@
     <button class="save-btn" onclick="saveWater()">บันทึก</button>
   </div>
 
-  <div class="water-ring">
+  <!-- <div class="water-ring">
     <svg width="120" height="120">
       <circle cx="60" cy="60" r="50"
       stroke="#eee" stroke-width="10" fill="none"/>
@@ -243,69 +243,78 @@
     </svg>
 
     <div id="waterPercent">0%</div>
-  </div>
+  </div> -->
 </div>
 
 </section>
 
+<!-- หน้า ไดอารี่ -->
 <section id="diary" class="page">
 
-<!-- แถบวัน -->
-<div class="diary-days">
-  <span>จ<br>2</span>
-  <span>อ<br>3</span>
-  <span>พ<br>4</span>
-  <span class="active">พฤ<br>5</span>
-  <span>ศ<br>6</span>
-  <span>ส<br>7</span>
-  <span>อ<br>8</span>
-</div>
+  <!-- แถบวัน -->
+  <div class="week diary-week" id="diaryWeek">
+    <span>จ<div></div></span>
+    <span>อ<div></div></span>
+    <span>พ<div></div></span>
+    <span>พฤ<div></div></span>
+    <span>ศ<div></div></span>
+    <span>ส<div></div></span>
+    <span>อ<div></div></span>
+  </div>
 
-<!-- การ์ดสรุปน้ำ -->
-<div class="card diary-card">
-  <h3>สรุป การดื่มน้ำ</h3>
+  <!-- การ์ดสรุปน้ำ -->
+  <div class="card diary-water-card">
+    <h3>การดื่มน้ำวันนี้</h3>
 
-  <div class="water-ring-ui">
-    <div class="ring-placeholder"></div>
-    <div class="ring-text-ui">
-      คงเหลือ<br><b>1,750</b>
+    <div class="water-ring-ui">
+      <svg width="160" height="160">
+        <circle cx="80" cy="80" r="70"
+          stroke="#eee" stroke-width="12" fill="none"/>
+
+        <circle id="diaryWaterRing"
+          cx="80" cy="80" r="70"
+          stroke="#2196f3" stroke-width="12"
+          fill="none" stroke-linecap="round"
+          stroke-dasharray="440"
+          stroke-dashoffset="440"/>
+      </svg>
+
+      <div class="ring-text-ui">
+        คงเหลือ<br>
+        <b id="diaryWaterLeft">0</b> มล.
+      </div>
     </div>
+
+    <button class="primary-btn diary-water-btn">
+      + ดื่มน้ำ 250 มล.
+    </button>
   </div>
 
-  <button class="primary-btn">
-    การดื่มน้ำ 250 มล.
-  </button>
-</div>
+  <!-- มื้ออาหาร -->
+  <div class="card diary-meal-card">
+    <h3>มื้ออาหาร</h3>
 
-<!-- มื้ออาหาร -->
-<div class="card">
+    <div class="meal-row">
+      <span>🍳 อาหารเช้า</span>
+      <b>0 kcal</b>
+    </div>
 
-  <h3>มื้ออาหาร</h3>
+    <div class="meal-row">
+      <span>🍛 อาหารกลางวัน</span>
+      <b>0 kcal</b>
+    </div>
 
-  <div class="meal">
-    อาหารเช้า (แคลอรี)
-    <span>0</span>
-  </div>
-  <button class="add-btn">+ บันทึกอาหาร</button>
+    <div class="meal-row">
+      <span>🍝 อาหารเย็น</span>
+      <b>0 kcal</b>
+    </div>
 
-  <div class="meal">
-    อาหารกลางวัน (แคลอรี)
-    <span>0</span>
-  </div>
-  <button class="add-btn">+ บันทึกอาหาร</button>
+    <div class="meal-row">
+      <span>🍪 อาหารว่าง</span>
+      <b>0 kcal</b>
+    </div>
 
-  <div class="meal">
-    อาหารเย็น (แคลอรี)
-    <span>0</span>
-  </div>
-  <button class="add-btn">+ บันทึกอาหาร</button>
-
-  <div class="meal">
-    อาหารว่าง (แคลอรี)
-    <span>0</span>
-  </div>
-  <button class="add-btn">+ บันทึกอาหาร</button>
-
+    <button class="add-btn">+ บันทึกอาหาร</button>
 </div>
 
 <!-- น้ำ -->
