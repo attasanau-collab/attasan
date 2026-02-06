@@ -25,7 +25,6 @@ function showPage(id){
   document.getElementById(id)
     .classList.add('active');
 
-  // ⭐ เปลี่ยนชื่อหัวหน้า
   const titles = {
     dashboard: "แดชบอร์ด",
     diary: "ไดอารี่",
@@ -34,7 +33,13 @@ function showPage(id){
 
   document.getElementById("pageTitle").innerText =
     titles[id] || "";
+
+  // ⭐ ไฮไลต์วันในหน้าไดอารี่
+  if(id === "diary"){
+    highlightDiaryToday();
+  }
 }
+
 
 /* Progress Ring แคล */
 const goal = 2000;
@@ -273,13 +278,10 @@ function toggleWater(el){
     el.classList.contains("fill");
 
   if(filled){
-
     el.classList.remove("fill");
     el.innerText="＋";
     waterNow -= waterPerCup;
-
   }else{
-
     el.classList.add("fill");
     el.innerText="🥛";
     waterNow += waterPerCup;
@@ -291,24 +293,33 @@ function toggleWater(el){
     waterNow + " มล.";
 
   updateWaterUI();
+
+  // ⭐ เช็คว่าดื่มครบเป้าหมายหรือยัง
+  if (waterNow >= waterGoal) {
+    notifyWaterGoal();
+  }
+
+  saveWaterData(); // เก็บข้อมูลรายวัน
 }
+
+
 
 // ===== วง + % =====
-function updateWaterUI(){
+// function updateWaterUI(){
 
-  const percent =
-    Math.min(waterNow / waterGoal, 1);
+//   const percent =
+//     Math.min(waterNow / waterGoal, 1);
 
-  const offset =
-    314 - (314 * percent);
+//   const offset =
+//     314 - (314 * percent);
 
-  document.getElementById("waterRing")
-    .style.strokeDashoffset = offset;
+//   document.getElementById("waterRing")
+//     .style.strokeDashoffset = offset;
 
-  document.getElementById("waterPercent")
-    .innerText =
-    Math.round(percent * 100) + "%";
-}
+//   document.getElementById("waterPercent")
+//     .innerText =
+//     Math.round(percent * 100) + "%";
+// }
 
 // โหลดข้อมูลรายวัน
 function updateWaterUI(){
@@ -599,3 +610,87 @@ function saveGoal(){
   closePopup();
 }
 
+// ===== Notification Permission =====
+function requestNotificationPermission(){
+  if ("Notification" in window) {
+    if (Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }
+}
+requestNotificationPermission();
+
+function notifyWaterGoal(){
+
+  const notifiedDate =
+    localStorage.getItem("waterNotifiedDate");
+
+  // ถ้าแจ้งไปแล้ววันนี้ ไม่ต้องแจ้งซ้ำ
+  if (notifiedDate === todayKey()) return;
+
+  // แจ้งเตือนจริง
+  if ("Notification" in window &&
+      Notification.permission === "granted") {
+
+    new Notification("💧 ดื่มน้ำครบแล้ว!", {
+      body: `คุณดื่มน้ำครบ ${waterGoal} มล. ต่อวันแล้ว เยี่ยมมาก 🎉`,
+      icon: "https://cdn-icons-png.flaticon.com/512/2917/2917990.png"
+    });
+
+  } else {
+    alert("💧 ดื่มน้ำครบตามเป้าหมายต่อวันแล้ว!");
+  }
+
+  // บันทึกว่าวันนี้แจ้งแล้ว
+  localStorage.setItem(
+    "waterNotifiedDate",
+    todayKey()
+  );
+}
+
+function highlightDiaryToday(){
+
+  // map ให้เริ่ม จันทร์
+  const map = [6,0,1,2,3,4,5];
+  const todayIndex = map[new Date().getDay()];
+
+  const days =
+    document.querySelectorAll("#diaryWeek span");
+
+  days.forEach(d => d.classList.remove("active"));
+
+  if(days[todayIndex]){
+    days[todayIndex].classList.add("active");
+  }
+}
+
+function updateDiaryWaterRing(){
+
+  const left =
+    Math.max(waterGoal - waterNow, 0);
+
+  const percent =
+    Math.min(waterNow / waterGoal, 1);
+
+  const offset =
+    440 - (440 * percent);
+
+  const ring =
+    document.getElementById("diaryWaterRing");
+
+  if(!ring) return;
+
+  ring.style.strokeDashoffset = offset;
+
+  document.getElementById("diaryWaterLeft").innerText =
+    left;
+}
+
+document
+  .querySelector(".diary-water-btn")
+  ?.addEventListener("click",()=>{
+    waterNow += waterPerCup;
+    updateDiaryWaterRing();
+    document.getElementById("waterNow").innerText =
+      waterNow + " มล.";
+  });
