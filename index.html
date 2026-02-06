@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Personalized Meal Planner</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Popup แก้ไขเป้าหมาย -->
+<div id="goalPopup" class="popup">
+  <div class="popup-card">
+
+    <div class="popup-header">
+      <span onclick="closePopup()">←</span>
+      <b>แก้ไขเป้าหมาย</b>
+    </div>
+
+    <div class="popup-item">
+      🔥 เป้าหมายแคลอรี
+      <input type="number" id="goalCal" value="2000">
+    </div>
+
+    <div class="popup-item">
+      🍞 เป้าหมายคาร์โบไฮเดรต
+      <input type="number" id="goalCarb" value="146">
+    </div>
+
+    <div class="popup-item">
+      🥩 เป้าหมายโปรตีน
+      <input type="number" id="goalProtein" value="195">
+    </div>
+
+    <div class="popup-item">
+      🧈 เป้าหมายไขมัน
+      <input type="number" id="goalFat" value="65">
+    </div>
+
+    <button class="save-btn" onclick="saveGoal()">บันทึก</button>
+  </div>
+</div>
+
+
+<header class="top">
+  <small id="todayDate"></small>
+  <h2 id="pageTitle">แดชบอร์ด</h2>
+
+</header>
+
+<main>
+
+<section id="dashboard" class="page active">
+
+<div class="card">
+  <div class="card-header">
+    <h3>แคลอรี</h3>
+    <span class="more" onclick="openPopup()">•••</span>
+
+  </div>
+  <p class="sub">คงเหลือ = เป้าหมาย - อาหาร + กิจกรรม</p>
+
+  <div class="ring-row">
+    <div class="ring">
+      <svg width="180" height="180">
+        <circle cx="90" cy="90" r="75" stroke="#eee" stroke-width="14" fill="none"/>
+        <circle id="calRing" cx="90" cy="90" r="75"
+          stroke="#000" stroke-width="14"
+          fill="none" stroke-linecap="round"
+          stroke-dasharray="471" stroke-dashoffset="471"/>
+      </svg>
+      <div class="ring-text">
+        <div>คงเหลือ</div>
+        <b id="ringCal">1952</b>
+      </div>
+    </div>
+
+    <div class="side-info">
+      <div>🎯 เป้าหมาย<br><b>1952</b></div>
+      <div>🍽 อาหาร<br><b>0</b></div>
+      <div>🏃 กิจกรรม<br><b>0</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- 2 สารอาหาร (ปัดได้) -->
+<div class="macro-page">
+
+  <div class="macro">
+    <canvas id="carbChart"></canvas>
+    คาร์บ<br>
+    <span id="carbText">0 / 146 g</span>
+  </div>
+
+  <div class="macro">
+    <canvas id="proteinChart"></canvas>
+    โปรตีน<br>
+    <span id="proteinText">0 / 195 g</span>
+  </div>
+
+  <div class="macro">
+    <canvas id="fatChart"></canvas>
+    ไขมัน<br>
+    <span id="fatText">0 / 65 g</span>
+  </div>
+
+</div>
+
+
+  <div class="dots">
+    <span class="dot active"></span>
+  </div>
+</div>
+
+<!-- 3 สถิติบันทึก -->
+<div class="card">
+  <h3>สถิติบันทึกต่อเนื่อง</h3>
+
+  <h1 id="streakNow">🔥 0 วัน</h1>
+
+  <p>อาหารนานที่สุด : <span id="foodBest">0</span> วัน <br>น้ำหนักนานที่สุด : <span id="weightBest">0</span> วัน</p>
+  <p>-------------------------------------------------------</p>
+
+  <div class="week" id="weekRow">
+    <span>จ<div></div></span>
+    <span>อ<div></div></span>
+    <span>พ<div></div></span>
+    <span>พฤ<div></div></span>
+    <span>ศ<div></div></span>
+    <span>ส<div></div></span>
+    <span>อ<div></div></span>
+  </div>
+</div>
+
+
+<!-- 4 น้ำหนัก -->
+<div class="card">
+  <div class="card-header">
+    <h3>น้ำหนัก</h3>
+    <span class="more" onclick="openWeightPopup()">＋</span>
+  </div>
+
+  <h1 id="weightDisplay">60.0 กก.</h1>
+  <p>เป้าหมาย 60 ภายใน 27 ก.พ. 2026</p>
+
+  <canvas id="weightChart"></canvas>
+</div>
+
+<div id="weightPopup" class="popup">
+  <div class="popup-card">
+
+    <div class="popup-header">
+      <span onclick="closeWeightPopup()">←</span>
+      <b>บันทึกน้ำหนัก</b>
+    </div>
+
+    <div class="popup-item">
+      น้ำหนักปัจจุบัน
+      <input type="number"
+             id="weightInput"
+             step="0.1"
+             min="0"
+             max="149.9"
+             value="60.0">
+    </div>
+
+    <div class="popup-item">
+  วันที่
+
+  <div class="thai-date">
+    <select id="day"></select>
+    <select id="month"></select>
+    <select id="year"></select>
+  </div>
+
+</div>
+
+    <button class="save-btn" onclick="saveWeight()">
+      บันทึก
+    </button>
+
+  </div>
+</div>
+
+
+<!-- 5 น้ำ -->
+<div class="card">
+  <div class="card-header">
+    <h3>การดื่มน้ำ</h3>
+    <span class="more" onclick="openWaterPopup()">•••</span>
+  </div>
+  <h1 id="waterNow">0 มล.</h1>
+  <p id="waterGoal">เป้าหมาย 2,000 มล.</p>
+  <div class="cups" id="waterCups">
+    <span onclick="toggleWater(this)">＋</span>
+    <span onclick="toggleWater(this)">＋</span>
+    <span onclick="toggleWater(this)">＋</span>
+    <span onclick="toggleWater(this)">＋</span>
+    <span onclick="toggleWater(this)">＋</span>
+    <span onclick="toggleWater(this)">＋</span>
+    <span onclick="toggleWater(this)">＋</span>
+    <span onclick="toggleWater(this)">＋</span>
+  </div>
+</div>
+
+<div id="waterPopup" class="popup">
+  <div class="popup-card">
+
+    <div class="popup-header">
+      <span onclick="closeWaterPopup()">←</span>
+      <b>ตั้งค่าการดื่มน้ำ</b>
+    </div>
+
+    <div class="popup-item">
+      ปริมาณที่บริโภค
+      <select id="waterAmount">
+        <option value="100">100 ml</option>
+        <option value="150">150 ml</option>
+        <option value="250">250 ml</option>
+      </select>
+    </div>
+
+    <div class="popup-item">
+      เป้าหมายรายวัน (มล.)
+      <input type="number" id="waterGoalInput" value="2000"
+             min="1000" max="10000">
+    </div>
+
+    <button class="save-btn" onclick="resetWater()">รีเซ็ต</button>
+    <button class="save-btn" onclick="saveWater()">บันทึก</button>
+  </div>
+
+  <div class="water-ring">
+    <svg width="120" height="120">
+      <circle cx="60" cy="60" r="50"
+      stroke="#eee" stroke-width="10" fill="none"/>
+
+      <circle id="waterRing" cx="60" cy="60" r="50"
+      stroke="#2196f3" stroke-width="10"
+      fill="none" stroke-linecap="round"
+      stroke-dasharray="314"
+      stroke-dashoffset="314"/>
+    </svg>
+
+    <div id="waterPercent">0%</div>
+  </div>
+</div>
+
+</section>
+
+<section id="diary" class="page">
+
+<!-- แถบวัน -->
+<div class="diary-days">
+  <span>จ<br>2</span>
+  <span>อ<br>3</span>
+  <span>พ<br>4</span>
+  <span class="active">พฤ<br>5</span>
+  <span>ศ<br>6</span>
+  <span>ส<br>7</span>
+  <span>อ<br>8</span>
+</div>
+
+<!-- การ์ดสรุปน้ำ -->
+<div class="card diary-card">
+  <h3>สรุป การดื่มน้ำ</h3>
+
+  <div class="water-ring-ui">
+    <div class="ring-placeholder"></div>
+    <div class="ring-text-ui">
+      คงเหลือ<br><b>1,750</b>
+    </div>
+  </div>
+
+  <button class="primary-btn">
+    การดื่มน้ำ 250 มล.
+  </button>
+</div>
+
+<!-- มื้ออาหาร -->
+<div class="card">
+
+  <h3>มื้ออาหาร</h3>
+
+  <div class="meal">
+    อาหารเช้า (แคลอรี)
+    <span>0</span>
+  </div>
+  <button class="add-btn">+ บันทึกอาหาร</button>
+
+  <div class="meal">
+    อาหารกลางวัน (แคลอรี)
+    <span>0</span>
+  </div>
+  <button class="add-btn">+ บันทึกอาหาร</button>
+
+  <div class="meal">
+    อาหารเย็น (แคลอรี)
+    <span>0</span>
+  </div>
+  <button class="add-btn">+ บันทึกอาหาร</button>
+
+  <div class="meal">
+    อาหารว่าง (แคลอรี)
+    <span>0</span>
+  </div>
+  <button class="add-btn">+ บันทึกอาหาร</button>
+
+</div>
+
+<!-- น้ำ -->
+<div class="card">
+
+  <h3>น้ำ (มล.)</h3>
+
+  <div class="cups-ui">
+    <span class="fill">🥛</span>
+    <span>＋</span>
+    <span>＋</span>
+    <span>＋</span>
+    <span>＋</span>
+    <span>＋</span>
+  </div>
+
+  <button class="add-btn">+ บันทึกการดื่มน้ำ</button>
+
+</div>
+
+</section>
+
+
+<section id="account" class="page">
+  <div class="card">
+    <h2>บัญชี</h2>
+    <ul>
+      <li>สมัคร / Login</li>
+      <li>ข้อมูลส่วนตัว</li>
+      <li>ปรับเป้าหมาย</li>
+      <li>การตั้งค่า</li>
+      <li>ออกจากระบบ</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<nav class="bottom">
+  <button onclick="showPage('dashboard')">แดชบอร์ด</button>
+  <button onclick="showPage('diary')">ไดอารี่</button>
+  <button class="plus">＋</button>
+  <button>ข้อมูลเชิงลึก</button>
+  <button onclick="showPage('account')">บัญชี</button>
+</nav>
+
+<script src="script.js"></script>
+<button onclick="resetAll()">รีเซ็ตเว็บ</button>
+
+</body>
+</html>
+
