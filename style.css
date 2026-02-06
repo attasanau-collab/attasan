@@ -182,7 +182,7 @@ main{padding-bottom:140px}
   100%{transform:scale(1.2);}
 }
 
-.water-ring{
+/* .water-ring{
   position:relative;
   width:120px;
   margin:10px auto;
@@ -200,7 +200,7 @@ main{padding-bottom:140px}
 @keyframes ringPop{
   from{transform:scale(.8);}
   to{transform:scale(1);}
-}
+} */
 
 .thai-date select{
   padding:6px;
@@ -244,28 +244,6 @@ main{padding-bottom:140px}
   text-align:center;
 }
 
-/* ring placeholder */
-.water-ring-ui{
-  position:relative;
-  margin:10px auto;
-  width:160px;
-  height:160px;
-}
-
-.ring-placeholder{
-  width:100%;
-  height:100%;
-  border-radius:50%;
-  background:#ddd;
-}
-
-.ring-text-ui{
-  position:absolute;
-  top:45px;
-  left:0;
-  right:0;
-  text-align:center;
-}
 
 /* ปุ่ม */
 .primary-btn{
@@ -352,3 +330,53 @@ main{padding-bottom:140px}
 .week{
   max-width:320px;
 }
+
+/* ===== Diary Layout ===== */
+
+.diary-week{
+  justify-content:flex-start;
+  gap:8px;
+  margin:10px 12px;
+}
+
+/* การ์ดน้ำ */
+.diary-water-card{
+  text-align:center;
+}
+
+.diary-water-card h3{
+  margin-bottom:10px;
+}
+
+/* ปุ่มน้ำ */
+.diary-water-btn{
+  margin-top:10px;
+  font-size:17px;
+  border-radius:18px;
+}
+
+/* การ์ดมื้ออาหาร */
+.diary-meal-card h3{
+  margin-bottom:10px;
+}
+
+.meal-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+}
+
+.meal-row:last-child{
+  border-bottom:none;
+}
+
+.meal-row span{
+  font-size:15px;
+}
+
+.meal-row b{
+  color:#444;
+}
+
