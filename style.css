@@ -389,6 +389,15 @@ main{padding-bottom:140px}
   overflow-x:auto;
   scroll-snap-type:x mandatory;
   -webkit-overflow-scrolling:touch;
+
+  /* 🔥 ซ่อน scrollbar */
+  -ms-overflow-style: none;   /* IE / Edge */
+  scrollbar-width: none;      /* Firefox */
+}
+
+/* 🔥 Chrome / Safari */
+.slider::-webkit-scrollbar{
+  display:none;
 }
 
 .slide{
@@ -396,6 +405,7 @@ main{padding-bottom:140px}
   scroll-snap-align:start;
   text-align:center;
 }
+
 
 
 
