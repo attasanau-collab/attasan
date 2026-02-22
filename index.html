@@ -192,14 +192,14 @@
   <h1 id="waterNow">0 มล.</h1>
   <p id="waterGoal">เป้าหมาย 2,000 มล.</p>
   <div class="cups" id="waterCups">
-    <span onclick="toggleWater(this)">＋</span>
-    <span onclick="toggleWater(this)">＋</span>
-    <span onclick="toggleWater(this)">＋</span>
-    <span onclick="toggleWater(this)">＋</span>
-    <span onclick="toggleWater(this)">＋</span>
-    <span onclick="toggleWater(this)">＋</span>
-    <span onclick="toggleWater(this)">＋</span>
-    <span onclick="toggleWater(this)">＋</span>
+    <span onclick="toggleWaterAll(0)">＋</span>
+    <span onclick="toggleWaterAll(1)">＋</span>
+    <span onclick="toggleWaterAll(2)">＋</span>
+    <span onclick="toggleWaterAll(3)">＋</span>
+    <span onclick="toggleWaterAll(4)">＋</span>
+    <span onclick="toggleWaterAll(5)">＋</span>
+    <span onclick="toggleWaterAll(6)">＋</span>
+    <span onclick="toggleWaterAll(7)">＋</span>
   </div>
 </div>
 
@@ -262,33 +262,78 @@
     <span>อ<div></div></span>
   </div>
 
+
+
   <!-- การ์ดสรุปน้ำ -->
   <div class="card diary-water-card">
-    <h3>การดื่มน้ำวันนี้</h3>
 
-    <div class="water-ring-ui">
-      <svg width="160" height="160">
-        <circle cx="80" cy="80" r="70"
-          stroke="#eee" stroke-width="12" fill="none"/>
+  <div class="slider" id="diarySlider">
 
-        <circle id="diaryWaterRing"
-          cx="80" cy="80" r="70"
-          stroke="#2196f3" stroke-width="12"
-          fill="none" stroke-linecap="round"
-          stroke-dasharray="440"
-          stroke-dashoffset="440"/>
-      </svg>
+    <!-- หน้า 1 : แคล + Macro -->
+    <div class="slide">
+      <h3>แคลอรี่วันนี้</h3>
 
-      <div class="ring-text-ui">
-        คงเหลือ<br>
-        <b id="diaryWaterLeft">0</b> มล.
+      <div class="water-ring-ui">
+        <svg width="160" height="160">
+          <circle cx="80" cy="80" r="70"
+            stroke="#eee" stroke-width="12" fill="none"/>
+
+          <circle id="diaryCalRing"
+            cx="80" cy="80" r="70"
+            stroke="#000" stroke-width="12"
+            fill="none" stroke-linecap="round"
+            stroke-dasharray="440"
+            stroke-dashoffset="440"/>
+        </svg>
+
+        <div class="ring-text-ui">
+          คงเหลือ<br>
+          <b id="diaryCalText">0</b> kcal
+        </div>
+      </div>
+
+      <!-- 🔥 macro ใต้ ring -->
+      <div style="margin-top:15px">
+        <b id="diaryCarbText">คาร์บ</b> 0 / 146 g |
+        <b id="diaryCarbText">โปรตีน</b> 0 / 195 g |
+        <b id="diaryCarbText">ไขมัน</b> 0 / 65 g
       </div>
     </div>
 
-    <button class="primary-btn diary-water-btn">
-      + ดื่มน้ำ 250 มล.
-    </button>
+    <!-- หน้า 2 : น้ำ -->
+    <div class="slide">
+      <h3>การดื่มน้ำวันนี้</h3>
+
+      <div class="water-ring-ui">
+        <svg width="160" height="160">
+          <circle cx="80" cy="80" r="70"
+            stroke="#eee" stroke-width="12" fill="none"/>
+
+          <circle id="diaryWaterRing"
+            cx="80" cy="80" r="70"
+            stroke="#2196f3" stroke-width="12"
+            fill="none" stroke-linecap="round"
+            stroke-dasharray="440"
+            stroke-dashoffset="440"/>
+        </svg>
+
+        <div class="ring-text-ui">
+          คงเหลือ<br>
+          <b id="diaryWaterLeft">0</b> มล.
+        </div>
+      </div>
+    </div>
+
   </div>
+
+  <!-- จุด -->
+  <div class="dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+  </div>
+
+</div>
+
 
   <!-- มื้ออาหาร -->
   <div class="card diary-meal-card">
@@ -322,16 +367,22 @@
 
   <h3>น้ำ (มล.)</h3>
 
-  <div class="cups-ui">
-    <span class="fill">🥛</span>
-    <span>＋</span>
-    <span>＋</span>
-    <span>＋</span>
-    <span>＋</span>
-    <span>＋</span>
+  <div class="cups" id="diaryCups">
+    <span onclick="toggleWaterAll(0)">＋</span>
+    <span onclick="toggleWaterAll(1)">＋</span>
+    <span onclick="toggleWaterAll(2)">＋</span>
+    <span onclick="toggleWaterAll(3)">＋</span>
+    <span onclick="toggleWaterAll(4)">＋</span>
+    <span onclick="toggleWaterAll(5)">＋</span>
+    <span onclick="toggleWaterAll(6)">＋</span>
+    <span onclick="toggleWaterAll(7)">＋</span>
   </div>
 
-  <button class="add-btn">+ บันทึกการดื่มน้ำ</button>
+</div>
+
+  <button class="add-btn" onclick="addDiaryWater()">
+  + บันทึกการดื่มน้ำ
+  </button>
 
 </div>
 
