@@ -887,23 +887,39 @@ function updateDiaryNutrition(){
   const offset =
     circumference - (circumference * percent);
 
-  document.getElementById("diaryCalRing")
-    ?.style.setProperty(
-      "stroke-dashoffset",
-      offset
-    );
+  const calRing =
+    document.getElementById("diaryCalRing");
 
-  document.getElementById("diaryCalText").innerText =
-    calorieGoal - foodCalories + activityCalories;
+  if(calRing)
+    calRing.style.strokeDashoffset = offset;
 
-  document.getElementById("diaryCarbText").innerText =
-    `${carbNow} / ${carbGoal} g`;
+  const calText =
+    document.getElementById("diaryCalText");
 
-  document.getElementById("diaryProteinText").innerText =
-    `${proteinNow} / ${proteinGoal} g`;
+  if(calText)
+    calText.innerText =
+      calorieGoal - foodCalories + activityCalories;
 
-  document.getElementById("diaryFatText").innerText =
-    `${fatNow} / ${fatGoal} g`;
+  const carbText =
+    document.getElementById("diaryCarbText");
+
+  if(carbText)
+    carbText.innerText =
+      `${carbNow} / ${carbGoal} g`;
+
+  const proteinText =
+    document.getElementById("diaryProteinText");
+
+  if(proteinText)
+    proteinText.innerText =
+      `${proteinNow} / ${proteinGoal} g`;
+
+  const fatText =
+    document.getElementById("diaryFatText");
+
+  if(fatText)
+    fatText.innerText =
+      `${fatNow} / ${fatGoal} g`;
 }
 
 // โหลดค่าน้ำตอนเปิดเว็บ
@@ -912,14 +928,16 @@ requestNotificationPermission();
 loadWaterData();
 syncCupsFromWater();
 updateDiaryWaterRing();
-updateCalorieRing();  // ⭐ ต้องมี
-updateMacros();       // ⭐ ต้องมี
-updateDiaryNutrition();
+function updateAll(){
+  updateCalorieRing();   // หน้าแดชบอร์ด
+  updateMacros();        // macro dashboard
+  updateDiaryNutrition(); // หน้าไดอารี่
+}
 
 // ทดสอบเพิ่ม แคล
 function addFoodTest(){
   foodCalories += 500;
-  updateCalorieRing();
+  updateAll();
 }
 
 // // ทดสอบเพิ่มค่า macro
@@ -927,7 +945,7 @@ function addMacroTest(){
   carbNow += 100;
   proteinNow += 100;
   fatNow += 100;
-  updateMacros();
+  updateAll();
 }
 
 
