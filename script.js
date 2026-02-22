@@ -942,11 +942,12 @@ function addFoodTest(){
 
 // // ทดสอบเพิ่มค่า macro
 function addMacroTest(){
-  carbNow += 100;
-  proteinNow += 100;
-  fatNow += 100;
+  carbNow += 5;
+  proteinNow += 5;
+  fatNow += 5;
   updateAll();
 }
+
 
 
 
