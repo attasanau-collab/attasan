@@ -10,8 +10,8 @@ main{padding-bottom:140px}
 .top h2{margin:2px 0}
 
 /* PAGE */
-.page{display:none}
-.page.active{display:block}
+.page { display:none }
+.page.active { display:block }
 
 /* CARD */
 .card{
@@ -379,4 +379,23 @@ main{padding-bottom:140px}
 .meal-row b{
   color:#444;
 }
+
+#calRing{
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.slider{
+  display:flex;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+}
+
+.slide{
+  min-width:100%;
+  scroll-snap-align:start;
+  text-align:center;
+}
+
+
 
