@@ -17,6 +17,27 @@ function updateThaiDate(){
 
 updateThaiDate();
 
+// ===== GLOBAL VARIABLES =====
+
+// CALORIE
+let calorieGoal = 2000;
+let foodCalories = 0;
+let activityCalories = 0;
+
+// MACRO
+let carbGoal = 146;
+let proteinGoal = 195;
+let fatGoal = 65;
+
+let carbNow = 0;
+let proteinNow = 0;
+let fatNow = 0;
+
+// WATER
+let waterGoal = 2000;
+let waterNow = 0;
+let waterPerCup = 250;
+
 function showPage(id){
 
   document.querySelectorAll('.page')
@@ -34,18 +55,13 @@ function showPage(id){
   document.getElementById("pageTitle").innerText =
     titles[id] || "";
 
-  // ⭐ ไฮไลต์วันในหน้าไดอารี่
   if(id === "diary"){
     highlightDiaryToday();
+    syncCupsFromWater();
+    updateDiaryWaterRing(); // ⭐ บังคับอัปเดตทุกครั้ง
   }
 }
 
-
-/* Progress Ring แคล */
-const goal = 2000;
-const current = 1952;
-const percent = current/goal;
-calRing.style.strokeDashoffset = 471 - (471*percent);
 
 /* Donut helper */
 function macro(id,value){
@@ -60,9 +76,9 @@ function macro(id,value){
 }
 
 /* หน้า 1 */
-macro("carbChart",40);
-macro("proteinChart",30);
-macro("fatChart",20);
+const carbChartObj = macro("carbChart",0);
+const proteinChartObj = macro("proteinChart",0);
+const fatChartObj = macro("fatChart",0);
 
 /***********************
   ระบบกราฟ + ประวัติน้ำหนัก
@@ -205,18 +221,9 @@ function closePopup(){
   document.getElementById("goalPopup").style.display="none";
 }
 
-function saveGoal(){
-  const cal = goalCal.value;
-  ringCal.innerText = cal;
-  closePopup();
-}
 
 /*  */
 
-// ===== WATER VARIABLES (บนสุด) =====
-let waterGoal = 2000;
-let waterNow = 0;
-let waterPerCup = 250;
 
 // ===== popup เปิด/ปิด =====
 function openWaterPopup(){
@@ -330,12 +337,44 @@ function updateWaterUI(){
   const offset =
     314 - (314 * percent);
 
-  document.getElementById("waterRing")
-    .style.strokeDashoffset = offset;
+  const ring =
+    document.getElementById("waterRing");
 
-  document.getElementById("waterPercent")
-    .innerText =
-    Math.round(percent * 100) + "%";
+  if(ring){
+    ring.style.strokeDashoffset = offset;
+  }
+
+  const percentText =
+    document.getElementById("waterPercent");
+
+  if(percentText){
+    percentText.innerText =
+      Math.round(percent * 100) + "%";
+  }
+}
+
+function updateCalorieRing(){
+
+  const ring =
+    document.getElementById("calRing");
+
+  if(!ring) return;
+
+  const circumference = 471;
+
+  const percent =
+    Math.min(foodCalories / calorieGoal, 1);
+
+  const offset =
+    circumference - (circumference * percent);
+
+  ring.style.strokeDashoffset = offset;
+
+  const remaining =
+    calorieGoal - foodCalories + activityCalories;
+
+  document.getElementById("ringCal").innerText =
+    remaining;
 }
 
 
@@ -589,23 +628,13 @@ function resetAll(){
 
 function saveGoal(){
 
-  const carbGoal =
-    Number(goalCarb.value);
+  calorieGoal = Number(goalCal.value);
+  carbGoal = Number(goalCarb.value);
+  proteinGoal = Number(goalProtein.value);
+  fatGoal = Number(goalFat.value);
 
-  const proteinGoal =
-    Number(goalProtein.value);
-
-  const fatGoal =
-    Number(goalFat.value);
-
-  document.getElementById("carbText").innerText =
-    `0 / ${carbGoal} g`;
-
-  document.getElementById("proteinText").innerText =
-    `0 / ${proteinGoal} g`;
-
-  document.getElementById("fatText").innerText =
-    `0 / ${fatGoal} g`;
+  updateCalorieRing();
+  updateMacros();
 
   closePopup();
 }
@@ -618,7 +647,7 @@ function requestNotificationPermission(){
     }
   }
 }
-requestNotificationPermission();
+
 
 function notifyWaterGoal(){
 
@@ -666,9 +695,6 @@ function highlightDiaryToday(){
 
 function updateDiaryWaterRing(){
 
-  const left =
-    Math.max(waterGoal - waterNow, 0);
-
   const percent =
     Math.min(waterNow / waterGoal, 1);
 
@@ -682,6 +708,9 @@ function updateDiaryWaterRing(){
 
   ring.style.strokeDashoffset = offset;
 
+  const left =
+    Math.max(waterGoal - waterNow, 0);
+
   document.getElementById("diaryWaterLeft").innerText =
     left;
 }
@@ -689,8 +718,218 @@ function updateDiaryWaterRing(){
 document
   .querySelector(".diary-water-btn")
   ?.addEventListener("click",()=>{
-    waterNow += waterPerCup;
-    updateDiaryWaterRing();
-    document.getElementById("waterNow").innerText =
-      waterNow + " มล.";
+
+    const cups =
+      document.querySelectorAll("#waterCups span");
+
+    // หาแก้วใบแรกที่ยังไม่ fill
+    for(let i=0;i<cups.length;i++){
+      if(!cups[i].classList.contains("fill")){
+        toggleWaterAll(i);
+        break;
+      }
+    }
+
   });
+
+  // ===== Sync All Cups (Dashboard + Diary) =====
+
+function toggleWaterAll(index){
+
+  const dashCups =
+    document.querySelectorAll("#waterCups span");
+
+  const diaryCups =
+    document.querySelectorAll("#diaryCups span");
+
+  const dashCup = dashCups[index];
+  const diaryCup = diaryCups[index];
+
+  const filled =
+    dashCup.classList.contains("fill");
+
+  if(filled){
+
+    dashCup.classList.remove("fill");
+    dashCup.innerText="＋";
+
+    diaryCup.classList.remove("fill");
+    diaryCup.innerText="＋";
+
+    waterNow -= waterPerCup;
+
+  }else{
+
+    dashCup.classList.add("fill");
+    dashCup.innerText="🥛";
+
+    diaryCup.classList.add("fill");
+    diaryCup.innerText="🥛";
+
+    waterNow += waterPerCup;
+  }
+
+  if(waterNow < 0) waterNow = 0;
+  if(waterNow > waterGoal)
+    waterNow = waterGoal;
+
+  document.getElementById("waterNow").innerText =
+    waterNow + " มล.";
+
+  // ⭐ sync ทุกอย่าง
+  updateWaterUI();        // วงแดชบอร์ด
+  updateDiaryWaterRing(); // วงไดอารี่
+  saveWaterData();
+}
+
+function syncCupsFromWater(){
+
+  const dashCups =
+    document.querySelectorAll("#waterCups span");
+
+  const diaryCups =
+    document.querySelectorAll("#diaryCups span");
+
+  const filledCount =
+    Math.floor(waterNow / waterPerCup);
+
+  for(let i=0;i<8;i++){
+
+    if(dashCups[i]){
+      if(i < filledCount){
+        dashCups[i].classList.add("fill");
+        dashCups[i].innerText="🥛";
+      }else{
+        dashCups[i].classList.remove("fill");
+        dashCups[i].innerText="＋";
+      }
+    }
+
+    if(diaryCups[i]){
+      if(i < filledCount){
+        diaryCups[i].classList.add("fill");
+        diaryCups[i].innerText="🥛";
+      }else{
+        diaryCups[i].classList.remove("fill");
+        diaryCups[i].innerText="＋";
+      }
+    }
+  }
+}
+
+function updateMacros(){
+
+  const carbPercent =
+    Math.min((carbNow / carbGoal) * 100, 100);
+
+  const proteinPercent =
+    Math.min((proteinNow / proteinGoal) * 100, 100);
+
+  const fatPercent =
+    Math.min((fatNow / fatGoal) * 100, 100);
+
+  carbChartObj.data.datasets[0].data =
+    [carbPercent, 100-carbPercent];
+
+  proteinChartObj.data.datasets[0].data =
+    [proteinPercent, 100-proteinPercent];
+
+  fatChartObj.data.datasets[0].data =
+    [fatPercent, 100-fatPercent];
+
+  carbChartObj.update();
+  proteinChartObj.update();
+  fatChartObj.update();
+
+  document.getElementById("carbText").innerText =
+    `${carbNow} / ${carbGoal} g`;
+
+  document.getElementById("proteinText").innerText =
+    `${proteinNow} / ${proteinGoal} g`;
+
+  document.getElementById("fatText").innerText =
+    `${fatNow} / ${fatGoal} g`;
+}
+
+const diarySlider =
+  document.getElementById("diarySlider");
+
+const diaryDots =
+  document.querySelectorAll(".diary-water-card .dot");
+
+if(diarySlider){
+
+  diarySlider.addEventListener("scroll",()=>{
+
+    const index =
+      Math.round(
+        diarySlider.scrollLeft /
+        diarySlider.offsetWidth
+      );
+
+    diaryDots.forEach(d =>
+      d.classList.remove("active")
+    );
+
+    if(diaryDots[index])
+      diaryDots[index].classList.add("active");
+  });
+
+}
+
+function updateDiaryNutrition(){
+
+  const circumference = 440;
+
+  const percent =
+    Math.min(foodCalories / calorieGoal, 1);
+
+  const offset =
+    circumference - (circumference * percent);
+
+  document.getElementById("diaryCalRing")
+    ?.style.setProperty(
+      "stroke-dashoffset",
+      offset
+    );
+
+  document.getElementById("diaryCalText").innerText =
+    calorieGoal - foodCalories + activityCalories;
+
+  document.getElementById("diaryCarbText").innerText =
+    `${carbNow} / ${carbGoal} g`;
+
+  document.getElementById("diaryProteinText").innerText =
+    `${proteinNow} / ${proteinGoal} g`;
+
+  document.getElementById("diaryFatText").innerText =
+    `${fatNow} / ${fatGoal} g`;
+}
+
+// โหลดค่าน้ำตอนเปิดเว็บ
+// โหลดค่าน้ำตอนเปิดเว็บ
+requestNotificationPermission();
+loadWaterData();
+syncCupsFromWater();
+updateDiaryWaterRing();
+updateCalorieRing();  // ⭐ ต้องมี
+updateMacros();       // ⭐ ต้องมี
+updateDiaryNutrition();
+
+// ทดสอบเพิ่ม แคล
+function addFoodTest(){
+  foodCalories += 500;
+  updateCalorieRing();
+}
+
+// // ทดสอบเพิ่มค่า macro
+function addMacroTest(){
+  carbNow += 100;
+  proteinNow += 100;
+  fatNow += 100;
+  updateMacros();
+}
+
+
+
+
