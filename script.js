@@ -960,6 +960,8 @@ function toggleQuickMenu(){
 
 }
 
+
+/* เปิดกล้อง */
 function openCamera(){
 
   const input = document.getElementById("cameraInput");
@@ -970,9 +972,7 @@ function openCamera(){
 
     if(this.files && this.files[0]){
 
-      const img = URL.createObjectURL(this.files[0]);
-
-      openFoodPage(img);
+      processImage(this.files[0]);   // ใช้ resize
 
     }
 
@@ -980,25 +980,8 @@ function openCamera(){
 
 }
 
-function openCamera(){
 
-  const input = document.getElementById("cameraInput");
-
-  input.click();
-
-  input.onchange = function(){
-
-    if(this.files && this.files[0]){
-
-      const img = URL.createObjectURL(this.files[0]);
-      openFoodPage(img);
-
-    }
-
-  }
-
-}
-
+/* เลือกรูปจากเครื่อง */
 function openGallery(){
 
   const input = document.getElementById("galleryInput");
@@ -1009,8 +992,7 @@ function openGallery(){
 
     if(this.files && this.files[0]){
 
-      const img = URL.createObjectURL(this.files[0]);
-      openFoodPage(img);
+      processImage(this.files[0]);
 
     }
 
@@ -1018,6 +1000,42 @@ function openGallery(){
 
 }
 
+
+/* ลดขนาดรูป */
+function processImage(file){
+
+  const img = new Image();
+  const reader = new FileReader();
+
+  reader.onload = function(e){
+    img.src = e.target.result;
+  };
+
+  img.onload = function(){
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const maxWidth = 800;
+    const scale = maxWidth / img.width;
+
+    canvas.width = maxWidth;
+    canvas.height = img.height * scale;
+
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+    const resized = canvas.toDataURL("image/jpeg",0.8);
+
+    openFoodPage(resized);
+
+  };
+
+  reader.readAsDataURL(file);
+
+}
+
+
+/* หน้าอาหาร */
 function openFoodPage(image){
 
   document.body.innerHTML = `
@@ -1025,7 +1043,7 @@ function openFoodPage(image){
   <div class="food-page">
 
     <div class="food-top">
-      <button class="back-btn" onclick="goBack()"><</button>
+      <button class="back-btn" onclick="goBack()">←</button>
     </div>
 
     <img src="${image}" class="food-img">
@@ -1047,25 +1065,8 @@ function openFoodPage(image){
 
 }
 
+
+/* กลับหน้าเว็บ */
 function goBack(){
   location.reload();
-}
-
-function openCamera(){
-
-  const input = document.getElementById("cameraInput");
-
-  input.click();
-
-  input.onchange = function(){
-
-    if(this.files && this.files[0]){
-
-      const img = URL.createObjectURL(this.files[0]);
-      openFoodPage(img);
-
-    }
-
-  }
-
 }
