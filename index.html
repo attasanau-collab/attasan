@@ -13,7 +13,7 @@
   <div class="popup-card">
 
     <div class="popup-header">
-      <span onclick="closePopup()">←</span>
+      <span onclick="closePopup()">✕</span>
       <b>แก้ไขเป้าหมาย</b>
     </div>
 
@@ -150,7 +150,7 @@
   <div class="popup-card">
 
     <div class="popup-header">
-      <span onclick="closeWeightPopup()">←</span>
+      <span onclick="closeWeightPopup()">✕</span>
       <b>บันทึกน้ำหนัก</b>
     </div>
 
@@ -207,7 +207,7 @@
   <div class="popup-card">
 
     <div class="popup-header">
-      <span onclick="closeWaterPopup()">←</span>
+      <span onclick="closeWaterPopup()">✕</span>
       <b>ตั้งค่าการดื่มน้ำ</b>
     </div>
 
@@ -416,36 +416,25 @@
 
   <div class="quick-grid">
 
+    <!-- สแกนอาหาร -->
     <div class="quick-item" onclick="openCamera()">
       📷
       <span>สแกนอาหาร</span>
     </div>
-    <input 
-      type="file"
-      id="cameraInput"
-      accept="image/*"
-      capture="environment"
-      style="display:none">
 
-
+    <!-- วิเคราะห์อาหาร -->
     <div class="quick-item" onclick="openGallery()">
       🍽
       <span>วิเคราะห์อาหาร</span>
     </div>
-    <input 
-      type="file"
-      id="galleryInput"
-      accept="image/*"
-      style="display:none">
 
-
-    <div class="quick-item">
+    <!-- ถาม AI -->
+    <div class="quick-item" onclick="openAI()">
       🤖
       <span>ถาม AI</span>
     </div>
 
-
-
+    <!-- บันทึกด่วน -->
     <div class="quick-item">
       ⚡
       <span>บันทึกด่วน</span>
@@ -455,29 +444,68 @@
 
 </div>
 
+
+<!-- input กล้อง -->
+<input 
+type="file"
+id="cameraInput"
+accept="image/*"
+capture="environment"
+style="display:none">
+
+<!-- input แกลเลอรี -->
+<input 
+type="file"
+id="galleryInput"
+accept="image/*"
+style="display:none">
+
+
+<!-- ===== AI PAGE ===== -->
+
+<div id="aiPage">
+
+  <div class="ai-top">
+    <button class="ai-close" onclick="closeAI()">✕</button>
+    <h2>ถาม AI</h2>
+  </div>
+
+  <div class="ai-chat">
+
+    <div class="ai-msg">
+      สวัสดี 👋 ถามเกี่ยวกับอาหารได้เลย
+    </div>
+
+  </div>
+
+  <div class="ai-input">
+    <input type="text" placeholder="พิมพ์คำถาม...">
+    <button>ส่ง</button>
+  </div>
+
+</div>
+
+
+<!-- ===== CAMERA PAGE ===== -->
+
 <div id="cameraPage">
 
   <video id="video" autoplay playsinline></video>
 
-  <!-- ปิด -->
   <button class="close-btn" onclick="closeCamera()">✕</button>
 
-  <!-- กรอบ -->
   <div class="scan-frame">
     <div class="corner1"></div>
     <div class="corner2"></div>
   </div>
 
-  <!-- ซูม -->
   <div class="zoom-bar">
     <span id="zoom1" onclick="setZoom(1)">1×</span>
     <span id="zoom2" onclick="setZoom(2)">2×</span>
   </div>
 
-  <!-- ปุ่มถ่าย -->
   <button class="capture-btn" onclick="capturePhoto()"></button>
 
-  <!-- สลับกล้อง -->
   <button class="switch-btn" onclick="switchCamera()">🔄</button>
 
   <canvas id="canvas"></canvas>
@@ -486,12 +514,12 @@
 
 
 <script src="script.js"></script>
+
 <div style="display:flex; gap:10px; padding:10px;">
   <button onclick="resetAll()">รีเซ็ตเว็บ</button>
   <button onclick="addFoodTest()">+500 kcal</button>
   <button onclick="addMacroTest()">+ Macro</button>
 </div>
-
 
 </body>
 </html>
