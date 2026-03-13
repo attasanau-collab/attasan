@@ -976,7 +976,9 @@ function openCamera(){
 
       const file = this.files[0];
 
-      processImage(file);   // ส่งไปย่อรูปแล้วเปิดหน้าอาหาร
+      const img = URL.createObjectURL(file);
+
+      openFoodPage(img);
 
     }
 
@@ -985,7 +987,7 @@ function openCamera(){
 }
 
 
-/* เลือกรูปจากเครื่อง */
+/* เลือกรูป */
 function openGallery(){
 
   const input = document.getElementById("galleryInput");
@@ -998,9 +1000,9 @@ function openGallery(){
 
     if(this.files && this.files.length > 0){
 
-      const file = this.files[0];
+      const img = URL.createObjectURL(this.files[0]);
 
-      processImage(file);
+      openFoodPage(img);
 
     }
 
@@ -1009,41 +1011,7 @@ function openGallery(){
 }
 
 
-/* ลดขนาดรูป (แก้ปัญหา RAM เต็ม) */
-function processImage(file){
-
-  const img = new Image();
-  const reader = new FileReader();
-
-  reader.onload = function(e){
-    img.src = e.target.result;
-  };
-
-  img.onload = function(){
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    const maxWidth = 800;
-    const scale = maxWidth / img.width;
-
-    canvas.width = maxWidth;
-    canvas.height = img.height * scale;
-
-    ctx.drawImage(img,0,0,canvas.width,canvas.height);
-
-    const resized = canvas.toDataURL("image/jpeg",0.8);
-
-    openFoodPage(resized);
-
-  };
-
-  reader.readAsDataURL(file);
-
-}
-
-
-/* หน้าแสดงอาหาร */
+/* หน้าอาหาร */
 function openFoodPage(image){
 
   document.body.innerHTML = `
