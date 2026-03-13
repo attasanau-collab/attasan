@@ -459,11 +459,20 @@
 
   <video id="video" autoplay playsinline></video>
 
-  <div class="camera-controls">
+  <!-- ปุ่มปิด -->
+  <button class="close-btn" onclick="closeCamera()">✕</button>
 
-    <button class="camera-btn capture" onclick="capturePhoto()">📷 ถ่าย</button>
+  <!-- กรอบสแกน -->
+  <div class="scan-frame"></div>
 
-    <button class="camera-btn close" onclick="closeCamera()">✕ ปิด</button>
+  <!-- ปุ่มล่าง -->
+  <div class="camera-bottom">
+
+    <button class="switch-btn" onclick="switchCamera()">🔄</button>
+
+    <button class="capture-btn" onclick="capturePhoto()"></button>
+
+    <div style="width:40px"></div>
 
   </div>
 
