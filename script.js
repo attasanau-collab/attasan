@@ -966,13 +966,17 @@ function openCamera(){
 
   const input = document.getElementById("cameraInput");
 
+  input.value = ""; // รีเซ็ตก่อนเปิดกล้อง
+
   input.click();
 
   input.onchange = function(){
 
-    if(this.files && this.files[0]){
+    if(this.files && this.files.length > 0){
 
-      processImage(this.files[0]);   // ย่อรูปก่อน
+      const file = this.files[0];
+
+      processImage(file);   // ส่งไปย่อรูปแล้วเปิดหน้าอาหาร
 
     }
 
@@ -986,13 +990,17 @@ function openGallery(){
 
   const input = document.getElementById("galleryInput");
 
+  input.value = "";
+
   input.click();
 
   input.onchange = function(){
 
-    if(this.files && this.files[0]){
+    if(this.files && this.files.length > 0){
 
-      processImage(this.files[0]);
+      const file = this.files[0];
+
+      processImage(file);
 
     }
 
