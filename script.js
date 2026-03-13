@@ -969,25 +969,32 @@ let stream;
 
 function openCamera(){
 
-  // ปิดเมนู
-  document.getElementById("quickMenu").style.display="none";
+  const menu = document.getElementById("quickMenu");
+  const cam = document.getElementById("cameraPage");
+  const video = document.getElementById("video");
 
-  // เปิดหน้ากล้อง
-  document.getElementById("cameraPage").style.display="block";
+  // ปิด quick menu
+  if(menu) menu.style.display = "none";
+
+  // เปิดกล้องแบบเต็มจอ
+  cam.style.display = "flex";
 
   navigator.mediaDevices.getUserMedia({
-    video:{ facingMode:"environment" }
+    video:{
+      facingMode:"environment",
+      width:{ ideal:1280 },
+      height:{ ideal:720 }
+    }
   }).then(function(s){
 
     stream = s;
 
-    const video = document.getElementById("video");
     video.srcObject = stream;
 
   }).catch(function(err){
 
     alert("ไม่สามารถเปิดกล้องได้");
-    console.log(err);
+    console.error(err);
 
   });
 
