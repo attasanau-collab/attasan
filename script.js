@@ -970,6 +970,7 @@ let stream;
 function openCamera(){
 
   document.getElementById("quickMenu").style.display="none";
+  document.body.classList.add("camera-open");
 
   const cam = document.getElementById("cameraPage");
   cam.style.display="flex";
@@ -1032,6 +1033,7 @@ function closeCamera(){
   }
 
   document.getElementById("cameraPage").style.display="none";
+  document.body.classList.remove("camera-open");
 
 }
 
