@@ -961,17 +961,10 @@ function toggleQuickMenu(){
 }
 
 
+/* เปิดกล้อง */
 function openCamera(){
-  openImagePicker();
-}
 
-function openGallery(){
-  openImagePicker();
-}
-
-function openImagePicker(){
-
-  const input = document.getElementById("imageInput");
+  const input = document.getElementById("cameraInput");
 
   input.value = "";
   input.click();
@@ -981,8 +974,9 @@ function openImagePicker(){
     if(this.files && this.files.length > 0){
 
       const file = this.files[0];
+      const img = URL.createObjectURL(file);
 
-      processImage(file);   // ย่อรูปก่อน
+      openPreviewPage(img);
 
     }
 
@@ -990,45 +984,56 @@ function openImagePicker(){
 
 }
 
-function processImage(file){
 
-  const reader = new FileReader();
-  const img = new Image();
+/* เลือกรูปจากเครื่อง */
+function openGallery(){
 
-  reader.onload = function(e){
-    img.src = e.target.result;
-  };
+  const input = document.getElementById("galleryInput");
 
-  img.onload = function(){
+  input.value = "";
+  input.click();
 
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+  input.onchange = function(){
 
-    const maxSize = 800;
+    if(this.files && this.files.length > 0){
 
-    let width = img.width;
-    let height = img.height;
+      const file = this.files[0];
+      const img = URL.createObjectURL(file);
 
-    if(width > maxSize){
-      height = height * (maxSize / width);
-      width = maxSize;
+      openPreviewPage(img);
+
     }
 
-    canvas.width = width;
-    canvas.height = height;
-
-    ctx.drawImage(img,0,0,width,height);
-
-    const resized = canvas.toDataURL("image/jpeg",0.8);
-
-    openFoodPage(resized);
-
-  };
-
-  reader.readAsDataURL(file);
+  }
 
 }
 
+
+/* หน้า Preview รูป */
+function openPreviewPage(image){
+
+  document.body.innerHTML = `
+  
+  <div class="preview-page">
+
+    <div class="food-top">
+      <button class="back-btn" onclick="goBack()">←</button>
+    </div>
+
+    <img src="${image}" class="food-img">
+
+    <button class="analyze-btn" onclick="openFoodPage('${image}')">
+      วิเคราะห์อาหาร
+    </button>
+
+  </div>
+
+  `;
+
+}
+
+
+/* หน้าแสดงอาหาร (ของเดิมเป้) */
 function openFoodPage(image){
 
   document.body.innerHTML = `
@@ -1058,6 +1063,8 @@ function openFoodPage(image){
 
 }
 
+
+/* กลับหน้าเว็บ */
 function goBack(){
   location.reload();
 }
