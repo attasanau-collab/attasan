@@ -967,7 +967,6 @@ function toggleQuickMenu(){
 
 let stream;
 let currentFacing = "environment";
-let zoomLevel = 1;
 
 /* ===========================
    OPEN CAMERA
@@ -1030,29 +1029,6 @@ function switchCamera(){
 
 }
 
-
-/* ===========================
-   ZOOM CONTROL
-=========================== */
-
-function setZoom(z){
-
-  zoomLevel = z;
-
-  const video = document.getElementById("video");
-
-  video.style.transform = `scale(${z})`;
-
-  document.getElementById("zoom1").classList.remove("active");
-  document.getElementById("zoom2").classList.remove("active");
-
-  if(z === 1){
-    document.getElementById("zoom1").classList.add("active");
-  }else{
-    document.getElementById("zoom2").classList.add("active");
-  }
-
-}
 
 
 /* ===========================
