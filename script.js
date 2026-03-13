@@ -961,33 +961,17 @@ function toggleQuickMenu(){
 }
 
 
-/* เปิดกล้อง */
 function openCamera(){
-
-  const input = document.getElementById("cameraInput");
-
-  input.value = ""; // รีเซ็ต input
-  input.click();
-
-  input.onchange = function(){
-
-    if(this.files && this.files.length > 0){
-
-      const file = this.files[0];
-
-      processImage(file); // ส่งไปย่อรูปก่อน
-
-    }
-
-  }
-
+  openImagePicker();
 }
 
-
-/* เลือกรูปจากเครื่อง */
 function openGallery(){
+  openImagePicker();
+}
 
-  const input = document.getElementById("galleryInput");
+function openImagePicker(){
+
+  const input = document.getElementById("imageInput");
 
   input.value = "";
   input.click();
@@ -998,7 +982,7 @@ function openGallery(){
 
       const file = this.files[0];
 
-      processImage(file);
+      processImage(file);   // ย่อรูปก่อน
 
     }
 
@@ -1006,8 +990,6 @@ function openGallery(){
 
 }
 
-
-/* ลดขนาดรูปก่อนใช้ (แก้ปัญหา RAM) */
 function processImage(file){
 
   const reader = new FileReader();
@@ -1022,7 +1004,7 @@ function processImage(file){
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    const maxSize = 800; // จำกัดขนาดรูป
+    const maxSize = 800;
 
     let width = img.width;
     let height = img.height;
@@ -1043,16 +1025,10 @@ function processImage(file){
 
   };
 
-  img.onerror = function(){
-    alert("ไม่สามารถโหลดรูปได้");
-  };
-
   reader.readAsDataURL(file);
 
 }
 
-
-/* หน้าแสดงอาหาร */
 function openFoodPage(image){
 
   document.body.innerHTML = `
@@ -1082,8 +1058,6 @@ function openFoodPage(image){
 
 }
 
-
-/* กลับหน้าเว็บ */
 function goBack(){
   location.reload();
 }
