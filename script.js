@@ -1194,3 +1194,33 @@ function analyzeFood(image){
 function goBack(){
   location.reload();
 }
+
+function openAI(e){
+
+  if(e) e.stopPropagation(); // กัน event ซ้อน
+
+  const menu = document.getElementById("quickMenu");
+  const ai = document.getElementById("aiPage");
+
+  menu.style.display = "none";
+  ai.style.display = "flex";
+
+}
+
+function closeAI(){
+
+  const ai = document.getElementById("aiPage");
+
+  ai.style.display="none";
+
+}
+
+function openAI(){
+
+  const menu = document.getElementById("quickMenu");
+  const ai = document.getElementById("aiPage");
+
+  menu.style.display = "none";
+  ai.style.display = "flex";
+
+}
