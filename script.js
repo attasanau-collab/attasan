@@ -966,6 +966,11 @@ function toggleQuickMenu(){
 =========================== */
 
 let stream;
+let currentFacing = "environment";
+
+/* ===========================
+   OPEN CAMERA
+=========================== */
 
 function openCamera(){
 
@@ -973,11 +978,22 @@ function openCamera(){
   document.body.classList.add("camera-open");
 
   const cam = document.getElementById("cameraPage");
-  cam.style.display="flex";
+  cam.style.display="block";
+
+  startCamera();
+
+}
+
+
+/* ===========================
+   START CAMERA
+=========================== */
+
+function startCamera(){
 
   navigator.mediaDevices.getUserMedia({
     video:{
-      facingMode:"environment"
+      facingMode: currentFacing
     }
   }).then(function(s){
 
@@ -992,6 +1008,24 @@ function openCamera(){
     console.log(err);
 
   });
+
+}
+
+
+/* ===========================
+   SWITCH CAMERA
+=========================== */
+
+function switchCamera(){
+
+  if(stream){
+    stream.getTracks().forEach(track=>track.stop());
+  }
+
+  currentFacing =
+    currentFacing === "environment" ? "user" : "environment";
+
+  startCamera();
 
 }
 
@@ -1017,7 +1051,7 @@ function capturePhoto(){
 
     analyzeFood(image);
 
-  },"image/jpeg",0.7);
+  },"image/jpeg",0.8);
 
 }
 
@@ -1036,7 +1070,6 @@ function closeCamera(){
   document.body.classList.remove("camera-open");
 
 }
-
 
 
 /* ===========================
@@ -1063,7 +1096,6 @@ function openGallery(){
   }
 
 }
-
 
 
 /* ===========================
@@ -1112,12 +1144,11 @@ function processImage(file){
 
       URL.revokeObjectURL(url);
 
-    },"image/jpeg",0.7);
+    },"image/jpeg",0.8);
 
   };
 
 }
-
 
 
 /* ===========================
@@ -1153,7 +1184,6 @@ function analyzeFood(image){
   `;
 
 }
-
 
 
 /* ===========================
