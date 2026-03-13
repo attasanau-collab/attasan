@@ -962,27 +962,64 @@ function toggleQuickMenu(){
 
 
 /* เปิดกล้อง */
-/* เปิดกล้อง */
+let stream;
+
 function openCamera(){
 
-  const input = document.getElementById("cameraInput");
+  // ซ่อน dashboard
+  const dash = document.getElementById("dashboard");
+  if(dash) dash.style.display = "none";
 
-  input.value = "";
-  input.click();
+  // เปิดหน้ากล้อง
+  document.getElementById("cameraPage").style.display = "block";
 
-  input.onchange = function(){
+  navigator.mediaDevices.getUserMedia({
+    video:{ facingMode:"environment" }
+  }).then(s => {
 
-    if(this.files && this.files.length > 0){
+    stream = s;
+    document.getElementById("video").srcObject = stream;
 
-      const file = this.files[0];
-
-      processImage(file);
-
-    }
-
-  }
+  }).catch(err=>{
+    alert("เปิดกล้องไม่ได้");
+    console.log(err);
+  });
 
 }
+
+
+function capturePhoto(){
+
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  ctx.drawImage(video,0,0);
+
+  const image = canvas.toDataURL("image/jpeg",0.7);
+
+  analyzeFood(image);
+
+}
+
+
+function closeCamera(){
+
+  if(stream){
+    stream.getTracks().forEach(track=>track.stop());
+  }
+
+  document.getElementById("cameraPage").style.display = "none";
+
+  // เอา dashboard กลับมา
+  const dash = document.getElementById("dashboard");
+  if(dash) dash.style.display = "block";
+
+}
+
 
 
 /* เลือกรูปจากเครื่อง */
@@ -1006,6 +1043,7 @@ function openGallery(){
   }
 
 }
+
 
 
 /* ลดขนาดรูปก่อนใช้ (แก้ปัญหา RAM) */
@@ -1058,6 +1096,7 @@ function processImage(file){
 }
 
 
+
 /* วิเคราะห์อาหาร (ตัวอย่าง demo) */
 function analyzeFood(image){
 
@@ -1088,6 +1127,7 @@ function analyzeFood(image){
   `;
 
 }
+
 
 
 /* กลับหน้าเว็บ */
