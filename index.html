@@ -462,15 +462,12 @@
   <!-- ปิด -->
   <button class="close-btn" onclick="closeCamera()">✕</button>
 
-  <!-- กรอบสแกน -->
-  <div class="scan-frame">
-    <div class="corner1"></div>
-    <div class="corner2"></div>
-  </div>
+  <!-- กรอบ -->
+  <div class="scan-frame"></div>
 
   <!-- ซูม -->
   <div class="zoom-bar">
-    <span id="zoom1" onclick="setZoom(1)" class="active">1×</span>
+    <span id="zoom1" onclick="setZoom(1)">1×</span>
     <span id="zoom2" onclick="setZoom(2)">2×</span>
   </div>
 
@@ -480,7 +477,7 @@
   <!-- สลับกล้อง -->
   <button class="switch-btn" onclick="switchCamera()">🔄</button>
 
-  <canvas id="canvas" style="display:none"></canvas>
+  <canvas id="canvas"></canvas>
 
 </div>
 
