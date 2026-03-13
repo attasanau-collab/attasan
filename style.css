@@ -1,1163 +1,614 @@
-function updateThaiDate(){
-  const now = new Date();
+*{font-family:sans-serif;box-sizing:border-box}
+body{margin:0;background:#f6f6f6}
 
-  const months = [
-    "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน",
-    "พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม",
-    "กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"
-  ];
+/* เผื่อที่ให้ bottom bar */
+main{padding-bottom:140px}
 
-  const day = now.getDate();
-  const month = months[now.getMonth()];
-  const year = now.getFullYear() + 543; // ปี พ.ศ.
+/* HEADER */
+.top{padding:10px 15px;background:#fff}
+.top small{display:block;margin-bottom:2px}
+.top h2{margin:2px 0}
 
-  document.getElementById("todayDate").innerText =
-    `${day} ${month} ${year}`;
+/* PAGE */
+.page { display:none }
+.page.active { display:block }
+
+/* CARD */
+.card{
+  background:#fff;
+  margin:8px 12px;
+  padding:15px;
+  border-radius:22px
+}
+.card:first-child{margin-top:6px}
+.sub{color:#777;font-size:13px}
+
+/* RING */
+.ring-row{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+.side-info{
+  display:flex;
+  gap:25px;
+  margin-top:10px;
+}
+.side-info div{margin:10px 0}
+.ring-text{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  line-height:1.2;
+}
+.ring-text b{
+  font-size:28px;
+  margin-top:4px;
+}
+.ring{
+  position:relative;
+}
+/* MACRO SLIDER */
+.macro-slider{
+  display:flex;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+}
+.macro-page{
+  min-width:100%;
+  display:flex;
+  justify-content:space-around;
+  scroll-snap-align:start;
+}
+.macro{
+  width:100px;
+  text-align:center;
 }
 
-updateThaiDate();
+/* DOTS */
+.dots{text-align:center;margin-top:10px}
+.dot{
+  display:inline-block;width:8px;height:8px;
+  background:#ccc;border-radius:50%;
+  margin:0 4px
+}
+.dot.active{background:#000}
 
-// ===== GLOBAL VARIABLES =====
+/* STREAK */
+.week span{
+  margin:5px;padding:8px;border-radius:50%;
+  background:#eee
+}
+.week .active{background:orange;color:#fff}
 
-// CALORIE
-let calorieGoal = 2000;
-let foodCalories = 0;
-let activityCalories = 0;
-
-// MACRO
-let carbGoal = 146;
-let proteinGoal = 195;
-let fatGoal = 65;
-
-let carbNow = 0;
-let proteinNow = 0;
-let fatNow = 0;
-
-// WATER
-let waterGoal = 2000;
-let waterNow = 0;
-let waterPerCup = 250;
-
-function showPage(id){
-
-  document.querySelectorAll('.page')
-    .forEach(p=>p.classList.remove('active'));
-
-  document.getElementById(id)
-    .classList.add('active');
-
-  const titles = {
-    dashboard: "แดชบอร์ด",
-    diary: "ไดอารี่",
-    account: "บัญชี"
-  };
-
-  document.getElementById("pageTitle").innerText =
-    titles[id] || "";
-
-  if(id === "diary"){
-    highlightDiaryToday();
-    syncCupsFromWater();
-    updateDiaryWaterRing(); // ⭐ บังคับอัปเดตทุกครั้ง
-  }
+/* WATER */
+.cups span{
+  display:inline-block;margin:6px;padding:10px;
+  background:#eee;border-radius:50%
 }
 
-
-/* Donut helper */
-function macro(id,value){
-  return new Chart(document.getElementById(id),{
-    type:'doughnut',
-    data:{datasets:[{data:[value,100-value]}]},
-    options:{
-      plugins:{legend:{display:false}},
-      cutout:'70%'
-    }
-  });
+/* BOTTOM NAV */
+.bottom{
+  position:fixed;bottom:0;width:100%;
+  display:flex;justify-content:space-around;
+  background:#fff;padding:10px 0;border-top:1px solid #ddd
+}
+.bottom button{background:none;border:none;font-size:14px}
+.plus{
+  background:#000 !important;color:#fff;
+  width:50px;height:50px;border-radius:50%;
+  font-size:24px
+}
+.more:active{
+  background:#eee;
 }
 
-/* หน้า 1 */
-const carbChartObj = macro("carbChart",0);
-const proteinChartObj = macro("proteinChart",0);
-const fatChartObj = macro("fatChart",0);
-
-/***********************
-  ระบบกราฟ + ประวัติน้ำหนัก
-************************/
-
-let weightHistory =
-  JSON.parse(localStorage.getItem("weightHistory")) || [];
-
-const weightChartObj = new Chart(weightChart,{
-  type:'line',
-  data:{
-    labels:[],
-    datasets:[{
-      data:[],
-      borderColor:'orange',
-      tension:0.4
-    }]
-  },
-  options:{plugins:{legend:{display:false}}}
-});
-
-// โหลดประวัติเดิม
-function loadWeightHistory(){
-
-  weightHistory.forEach(item=>{
-    weightChartObj.data.labels.push(item.date);
-    weightChartObj.data.datasets[0].data.push(item.weight);
-  });
-
-  weightChartObj.update();
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-loadWeightHistory();
-
-
-/***********************
-  วันตามเดือน + leap year
-************************/
-
-function daysInMonth(month,year){
-  return new Date(year, month, 0).getDate();
+.more{
+  font-size:16px;
+  padding:4px 10px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  color:#777;
+  cursor:pointer;
+  margin-right:6px; /* กันชิดขอบ */
 }
-
-function updateDays(){
-
-  const d = document.getElementById("day");
-  const m = Number(document.getElementById("month").value);
-  const y = Number(document.getElementById("year").value);
-
-  if(!d || !m || !y) return;
-
-  // ⭐ คำนวณจำนวนวันของเดือนจริง (รองรับ leap year)
-  const max = new Date(y, m, 0).getDate();
-
-  const current = d.value;
-
-  d.innerHTML = "";
-
-  for(let i=1;i<=max;i++){
-    d.add(new Option(i, i));
-  }
-
-  if(current <= max) d.value = current;
+.popup{
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.4);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
 }
 
 
-// ผูก dropdown
-document.addEventListener("change", e=>{
-  if(e.target.id==="month" || e.target.id==="year"){
-    updateDays();
-  }
-});
+.popup-card{
+  background:#fff;
+  width:90%;
+  max-width:360px;
+  border-radius:20px;
+  padding:20px;
+}
 
+.popup-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:18px;
+  margin-bottom:15px;
+}
 
-/***********************
-  override saveWeight
-************************/
+.popup-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:12px 0;
+}
 
-const oldSaveWeight = saveWeight;
+.popup-item input{
+  width:100px;
+  padding:6px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  text-align:right;
+}
 
-saveWeight = function(){
+.save-btn{
+  width:100%;
+  margin-top:20px;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#000;
+  color:#fff;
+  font-size:16px;
+}
 
-  let w = parseFloat(weightInput.value);
-  if(isNaN(w)) return;
+.popup select{
+  padding:6px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
 
-  const d = day.value;
-  const m = month.value;
-  const y = year.value;
+.cups span{
+  display:inline-block;
+  margin:6px;
+  padding:10px;
+  background:#eee;
+  border-radius:50%;
+  cursor:pointer;
+  transition:all .2s ease;
+}
 
-  const label = `${d}/${m}/${y}`;
+.cups span.fill{
+  background:#4fc3f7;
+  transform:scale(1.2);
+}
 
-  // เก็บประวัติ
-  weightHistory.push({
-    date:label,
-    weight:w
-  });
+@keyframes pop{
+  0%{transform:scale(0.5);}
+  100%{transform:scale(1.2);}
+}
 
-  localStorage.setItem(
-    "weightHistory",
-    JSON.stringify(weightHistory)
-  );
+/* .water-ring{
+  position:relative;
+  width:120px;
+  margin:10px auto;
+}
 
-  // ลงกราฟ
-  weightChartObj.data.labels.push(label);
-  weightChartObj.data.datasets[0].data.push(w);
-  weightChartObj.update();
+.water-ring div{
+  position:absolute;
+  top:40px;
+  left:0;
+  right:0;
+  text-align:center;
+  font-weight:bold;
+}
 
-  document.getElementById("weightDisplay").innerText =
-    w.toFixed(1)+" กก.";
+@keyframes ringPop{
+  from{transform:scale(.8);}
+  to{transform:scale(1);}
+} */
 
-  closeWeightPopup();
-};
+.thai-date select{
+  padding:6px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  margin-left:4px;
+}
 
+@keyframes streakPop{
+  0%{transform:scale(1);}
+  40%{transform:scale(1.4);}
+  100%{transform:scale(1);}
+}
 
-/* เปลี่ยน dot ตามตำแหน่ง scroll */
-const slider = document.getElementById('macroSlider');
-const dots = document.querySelectorAll('.dot');
+.streak-pop{
+  animation:streakPop .35s ease;
+}
 
-if (slider) {
-  slider.addEventListener('scroll', () => {
+/* แถบวัน */
+.diary-days{
+  display:flex;
+  justify-content:space-around;
+  margin:10px;
+}
 
-    const index =
-      Math.round(slider.scrollLeft / slider.offsetWidth);
+.diary-days span{
+  text-align:center;
+  padding:8px;
+  border-radius:50%;
+  background:#eee;
+  font-size:13px;
+}
 
-    dots.forEach(d =>
-      d.classList.remove('active')
-    );
+.diary-days .active{
+  background:#ff8a50;
+  color:#fff;
+}
 
-    if (dots[index])
-      dots[index].classList.add('active');
-  });
+/* การ์ด */
+.diary-card{
+  text-align:center;
 }
 
 
-function openPopup(){
-  document.getElementById("goalPopup").style.display="flex";
+/* ปุ่ม */
+.primary-btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:16px;
+  background:#3b82f6;
+  color:#fff;
+  margin-top:10px;
 }
 
-function closePopup(){
-  document.getElementById("goalPopup").style.display="none";
+.add-btn{
+  background:none;
+  border:none;
+  color:#a0522d;
+  margin:6px 0 12px;
+  font-size:15px;
 }
 
-
-/*  */
-
-
-// ===== popup เปิด/ปิด =====
-function openWaterPopup(){
-  document.getElementById("waterPopup")
-    .style.display = "flex";
+/* มื้ออาหาร */
+.meal{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
 }
 
-function closeWaterPopup(){
-  document.getElementById("waterPopup")
-    .style.display = "none";
+/* แก้วน้ำ */
+.cups-ui span{
+  display:inline-block;
+  margin:6px;
+  padding:10px;
+  background:#eee;
+  border-radius:50%;
 }
 
-// ===== รีเซ็ตน้ำ =====
-function resetWater(){
-
-  waterNow = 0;
-
-  document.getElementById("waterNow").innerText =
-    "0 มล.";
-
-  // ล้างแก้ว
-  document
-    .querySelectorAll("#waterCups span")
-    .forEach(c=>{
-      c.classList.remove("fill");
-      c.innerText="＋";
-    });
-
-  updateWaterUI();
+.week{
+  display:flex;
+  justify-content:space-between;
+  margin-top:8px;
 }
 
-// ===== บันทึก popup =====
-function saveWater(){
-
-  const amountEl =
-    document.getElementById("waterAmount");
-
-  const goalEl =
-    document.getElementById("waterGoalInput");
-
-  if(!amountEl || !goalEl){
-    alert("ไม่พบช่องตั้งค่า");
-    return;
-  }
-
-  waterPerCup = Number(amountEl.value);
-  waterGoal = Number(goalEl.value);
-
-  document.getElementById("waterGoal").innerText =
-    `เป้าหมาย ${waterGoal} มล.`;
-
-  closeWaterPopup();
+.week span{
+  text-align:center;
+  padding:6px 8px;
+  border-radius:12px;
 }
 
-// ===== กดแก้ว =====
-function toggleWater(el){
+.week span{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:6px 8px;
+  border-radius:12px;
+}
 
-  const filled =
-    el.classList.contains("fill");
+.week span div{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:transparent;
+  margin-top:4px;
+}
 
-  if(filled){
-    el.classList.remove("fill");
-    el.innerText="＋";
-    waterNow -= waterPerCup;
-  }else{
-    el.classList.add("fill");
-    el.innerText="🥛";
-    waterNow += waterPerCup;
-  }
+.week .active{
+  background:#ff8a50;
+  color:#fff;
+}
 
-  if(waterNow < 0) waterNow = 0;
-
-  document.getElementById("waterNow").innerText =
-    waterNow + " มล.";
-
-  updateWaterUI();
-
-  // ⭐ เช็คว่าดื่มครบเป้าหมายหรือยัง
-  if (waterNow >= waterGoal) {
-    notifyWaterGoal();
-  }
-
-  saveWaterData(); // เก็บข้อมูลรายวัน
+.week .active div{
+  background:#fff;
 }
 
 
-
-// ===== วง + % =====
-// function updateWaterUI(){
-
-//   const percent =
-//     Math.min(waterNow / waterGoal, 1);
-
-//   const offset =
-//     314 - (314 * percent);
-
-//   document.getElementById("waterRing")
-//     .style.strokeDashoffset = offset;
-
-//   document.getElementById("waterPercent")
-//     .innerText =
-//     Math.round(percent * 100) + "%";
-// }
-
-// โหลดข้อมูลรายวัน
-function updateWaterUI(){
-
-  const percent =
-    Math.min(waterNow / waterGoal, 1);
-
-  const offset =
-    314 - (314 * percent);
-
-  const ring =
-    document.getElementById("waterRing");
-
-  if(ring){
-    ring.style.strokeDashoffset = offset;
-  }
-
-  const percentText =
-    document.getElementById("waterPercent");
-
-  if(percentText){
-    percentText.innerText =
-      Math.round(percent * 100) + "%";
-  }
+.week .active{
+  background:#ff8a50;
+  color:#fff;
 }
 
-function updateCalorieRing(){
-
-  const ring =
-    document.getElementById("calRing");
-
-  if(!ring) return;
-
-  const circumference = 471;
-
-  const percent =
-    Math.min(foodCalories / calorieGoal, 1);
-
-  const offset =
-    circumference - (circumference * percent);
-
-  ring.style.strokeDashoffset = offset;
-
-  const remaining =
-    calorieGoal - foodCalories + activityCalories;
-
-  document.getElementById("ringCal").innerText =
-    remaining;
+.week .active .dot{
+  background:#fff;
 }
 
-
-// ===== auto reset รายวัน =====
-
-function todayKey(){
-  return new Date().toDateString();
+.week{
+  max-width:320px;
 }
 
-function saveWaterData(){
-  localStorage.setItem("waterNow", waterNow);
-  localStorage.setItem("waterDate", todayKey());
+/* ===== Diary Layout ===== */
+
+.diary-week{
+  justify-content:flex-start;
+  gap:8px;
+  margin:10px 12px;
 }
 
-function loadWaterData(){
-
-  const savedDate = localStorage.getItem("waterDate");
-
-  if(savedDate === todayKey()){
-    waterNow = Number(localStorage.getItem("waterNow")) || 0;
-  }else{
-    waterNow = 0;
-    localStorage.setItem("waterDate", todayKey());
-  }
-
-  document.getElementById("waterNow").innerText =
-    waterNow + " มล.";
-
-  updateWaterUI();
+/* การ์ดน้ำ */
+.diary-water-card{
+  text-align:center;
 }
 
-
-// ===== สร้าง dropdown วัน/เดือน/ปี =====
-function initDate(){
-
-  const d = document.getElementById("day");
-  const m = document.getElementById("month");
-  const y = document.getElementById("year");
-
-  if(!d || !m || !y){
-    console.log("ไม่เจอ dropdown");
-    return;
-  }
-
-  d.innerHTML = "";
-  m.innerHTML = "";
-  y.innerHTML = "";
-
-  const now = new Date();
-
-  // ⭐ เดือนภาษาไทย (ต้องอยู่ในนี้)
-  const monthsThai = [
-    "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน",
-    "พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม",
-    "กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"
-  ];
-
-  // เดือน
-  monthsThai.forEach((name,i)=>{
-    m.add(new Option(name, i+1));
-  });
-
-  // ปี ค.ศ.
-  const yearNow = now.getFullYear();
-
-  for(let i=yearNow-20;i<=yearNow+20;i++){
-    y.add(new Option(i, i));
-  }
-
-  // วัน (ชั่วคราวก่อนปรับ)
-  for(let i=1;i<=31;i++){
-    d.add(new Option(i, i));
-  }
-
-  // ตั้งค่า default
-  d.value = now.getDate();
-  m.value = now.getMonth()+1;
-  y.value = yearNow;
-
-  updateDays(); // ⭐ ปรับวันตามเดือนจริง
+.diary-water-card h3{
+  margin-bottom:10px;
 }
 
-
-// ===== popup เปิด/ปิด =====
-function openWeightPopup(){
-
-  const popup =
-    document.getElementById("weightPopup");
-
-  popup.style.display = "flex";
-
-  initDate();
-  updateDays();
+/* ปุ่มน้ำ */
+.diary-water-btn{
+  margin-top:10px;
+  font-size:17px;
+  border-radius:18px;
 }
 
-function closeWeightPopup(){
-
-  const popup =
-    document.getElementById("weightPopup");
-
-  popup.style.display = "none";
+/* การ์ดมื้ออาหาร */
+.diary-meal-card h3{
+  margin-bottom:10px;
 }
 
-
-// ===== บันทึกน้ำหนัก =====
-function saveWeight(){
-
-  let w = parseFloat(weightInput.value);
-  if(isNaN(w)) return;
-
-  const day = document.getElementById("day").value;
-  const month = document.getElementById("month").selectedIndex;
-  const year = document.getElementById("year").value;
-
-  document.getElementById("weightDisplay").innerText =
-    w.toFixed(1) + " กก.";
-
-  closeWeightPopup();
-
-  alert(
-    `บันทึก ${w.toFixed(1)} กก.\n` +
-    `วันที่ ${day} ${monthsThai[month]} ${year}`
-  );
+.meal-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
 }
 
-/***************
-  ระบบ streak
-****************/
-
-let streakData = JSON.parse(
-  localStorage.getItem("streakData")
-) || {
-  lastFood:null,
-  lastWeight:null,
-  foodStreak:0,
-  weightStreak:0,
-  bestFood:0,
-  bestWeight:0
-};
-
-function todayKey(){
-  return new Date().toDateString();
+.meal-row:last-child{
+  border-bottom:none;
 }
 
-function yesterdayKey(){
-  const d=new Date();
-  d.setDate(d.getDate()-1);
-  return d.toDateString();
+.meal-row span{
+  font-size:15px;
 }
 
-// ===== เรียกเมื่อบันทึกอาหาร =====
-function recordFood(){
-
-  if(streakData.lastFood===todayKey()) return;
-
-  if(streakData.lastFood===yesterdayKey())
-    streakData.foodStreak++;
-  else
-    streakData.foodStreak=1;
-
-  streakData.lastFood=todayKey();
-
-  if(streakData.foodStreak>streakData.bestFood)
-    streakData.bestFood=streakData.foodStreak;
-
-  saveStreak();
+.meal-row b{
+  color:#444;
 }
 
-// ===== เรียกเมื่อบันทึกน้ำหนัก =====
-function recordWeight(){
-
-  if(streakData.lastWeight===todayKey()) return;
-
-  if(streakData.lastWeight===yesterdayKey())
-    streakData.weightStreak++;
-  else
-    streakData.weightStreak=1;
-
-  streakData.lastWeight=todayKey();
-
-  if(streakData.weightStreak>streakData.bestWeight)
-    streakData.bestWeight=streakData.weightStreak;
-
-  saveStreak();
+#calRing{
+  transition: stroke-dashoffset 0.5s ease;
 }
 
-function saveStreak(){
-  localStorage.setItem(
-    "streakData",
-    JSON.stringify(streakData)
-  );
-  updateStreakUI();
+.slider{
+  display:flex;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+
+  /* 🔥 ซ่อน scrollbar */
+  -ms-overflow-style: none;   /* IE / Edge */
+  scrollbar-width: none;      /* Firefox */
 }
 
-function updateStreakUI(){
+/* 🔥 Chrome / Safari */
+.slider::-webkit-scrollbar{
+  display:none;
+}
 
-  const current=Math.max(
-    streakData.foodStreak,
-    streakData.weightStreak
-  );
+.slide{
+  min-width:100%;
+  scroll-snap-align:start;
+  text-align:center;
+}
 
-  const el = document.getElementById("streakNow");
+.quick-menu{
+  position:fixed;
+  bottom:90px;
+  left:0;
+  right:0;
+  display:none;
+  justify-content:center;
+  z-index:200;
+}
 
-  el.innerText = `🔥 ${current} วัน`;
+/* กล่อง popup */
+.quick-grid{
+  background:#fff;
+  padding:28px 40px;
+  border-radius:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
 
-  // ⭐ ทำให้เด้ง
-  el.classList.remove("streak-pop");
-  void el.offsetWidth; // รี animation
-  el.classList.add("streak-pop");
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px;
 
-  document.getElementById("foodBest").innerText =
-    streakData.bestFood;
+  width:380px; /* ความยาวซ้ายขวา */
+}
 
-  document.getElementById("weightBest").innerText =
-    streakData.bestWeight;
+/* ปุ่ม */
+.quick-item{
+  height:100px;
+  background:#f5f5f5;
+  border-radius:18px;
 
-  highlightToday();
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  font-size:26px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+
+/* ข้อความใต้ icon */
+.quick-item span{
+  font-size:14px;
+  margin-top:6px;
+}
+
+/* hover effect */
+.quick-item:hover{
+  transform:scale(1.05);
+  background:#eee;
+}
+
+.food-page{
+  padding:20px;
+  font-family:sans-serif;
+}
+
+.food-img{
+  width:100%;
+  border-radius:20px;
+  margin-bottom:15px;
+}
+
+.food-cal{
+  font-size:22px;
+  margin:10px 0;
+}
+
+.macro-row{
+  display:flex;
+  gap:20px;
+  font-size:14px;
+}
+
+.food-top{
+  margin-bottom:10px;
+}
+
+.back-btn{
+  border:none;
+  background:#eee;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  font-size:18px;
+  cursor:pointer;
+}
+
+.preview-page{
+  padding:20px;
+}
+
+.analyze-btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#000;
+  color:#fff;
+  font-size:16px;
+  margin-top:20px;
+}
+
+/* ===== CAMERA FULLSCREEN ===== */
+
+#cameraPage{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+
+  width:100%;
+  height:100%;
+
+  background:#000;
+
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  z-index:99999;
 }
 
 
-/***************
- ไฮไลต์วันในสัปดาห์
-****************/
+/* VIDEO กล้อง */
 
-function highlightToday(){
+#cameraPage video{
+  position:absolute;
+  top:0;
+  left:0;
 
-  const map = [6,0,1,2,3,4,5];
-  const today = map[new Date().getDay()];
+  width:100%;
+  height:100%;
 
-  const days =
-    document.querySelectorAll("#weekRow span");
-
-  days.forEach(d=>d.classList.remove("active"));
-
-  if(days[today])
-    days[today].classList.add("active");
+  object-fit:cover;
 }
 
 
+/* ปุ่มควบคุม */
 
+.camera-controls{
+  position:absolute;
+  bottom:40px;
+  left:0;
+  right:0;
 
-updateStreakUI();
+  display:flex;
+  justify-content:center;
+  gap:20px;
 
-function resetAll(){
-
-  if(!confirm("รีเซ็ตข้อมูลทั้งหมด?")) return;
-
-  localStorage.clear();
-  location.reload();
-}
-
-function saveGoal(){
-
-  calorieGoal = Number(goalCal.value);
-  carbGoal = Number(goalCarb.value);
-  proteinGoal = Number(goalProtein.value);
-  fatGoal = Number(goalFat.value);
-
-  updateCalorieRing();
-  updateMacros();
-
-  closePopup();
-}
-
-// ===== Notification Permission =====
-function requestNotificationPermission(){
-  if ("Notification" in window) {
-    if (Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-  }
+  z-index:2;
 }
 
 
-function notifyWaterGoal(){
+/* ปุ่ม */
 
-  const notifiedDate =
-    localStorage.getItem("waterNotifiedDate");
+.camera-btn{
+  padding:14px 20px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
 
-  // ถ้าแจ้งไปแล้ววันนี้ ไม่ต้องแจ้งซ้ำ
-  if (notifiedDate === todayKey()) return;
+  background:#ffffff;
+  color:#000;
 
-  // แจ้งเตือนจริง
-  if ("Notification" in window &&
-      Notification.permission === "granted") {
-
-    new Notification("💧 ดื่มน้ำครบแล้ว!", {
-      body: `คุณดื่มน้ำครบ ${waterGoal} มล. ต่อวันแล้ว เยี่ยมมาก 🎉`,
-      icon: "https://cdn-icons-png.flaticon.com/512/2917/2917990.png"
-    });
-
-  } else {
-    alert("💧 ดื่มน้ำครบตามเป้าหมายต่อวันแล้ว!");
-  }
-
-  // บันทึกว่าวันนี้แจ้งแล้ว
-  localStorage.setItem(
-    "waterNotifiedDate",
-    todayKey()
-  );
-}
-
-function highlightDiaryToday(){
-
-  // map ให้เริ่ม จันทร์
-  const map = [6,0,1,2,3,4,5];
-  const todayIndex = map[new Date().getDay()];
-
-  const days =
-    document.querySelectorAll("#diaryWeek span");
-
-  days.forEach(d => d.classList.remove("active"));
-
-  if(days[todayIndex]){
-    days[todayIndex].classList.add("active");
-  }
-}
-
-function updateDiaryWaterRing(){
-
-  const percent =
-    Math.min(waterNow / waterGoal, 1);
-
-  const offset =
-    440 - (440 * percent);
-
-  const ring =
-    document.getElementById("diaryWaterRing");
-
-  if(!ring) return;
-
-  ring.style.strokeDashoffset = offset;
-
-  const left =
-    Math.max(waterGoal - waterNow, 0);
-
-  document.getElementById("diaryWaterLeft").innerText =
-    left;
-}
-
-document
-  .querySelector(".diary-water-btn")
-  ?.addEventListener("click",()=>{
-
-    const cups =
-      document.querySelectorAll("#waterCups span");
-
-    // หาแก้วใบแรกที่ยังไม่ fill
-    for(let i=0;i<cups.length;i++){
-      if(!cups[i].classList.contains("fill")){
-        toggleWaterAll(i);
-        break;
-      }
-    }
-
-  });
-
-  // ===== Sync All Cups (Dashboard + Diary) =====
-
-function toggleWaterAll(index){
-
-  const dashCups =
-    document.querySelectorAll("#waterCups span");
-
-  const diaryCups =
-    document.querySelectorAll("#diaryCups span");
-
-  const dashCup = dashCups[index];
-  const diaryCup = diaryCups[index];
-
-  const filled =
-    dashCup.classList.contains("fill");
-
-  if(filled){
-
-    dashCup.classList.remove("fill");
-    dashCup.innerText="＋";
-
-    diaryCup.classList.remove("fill");
-    diaryCup.innerText="＋";
-
-    waterNow -= waterPerCup;
-
-  }else{
-
-    dashCup.classList.add("fill");
-    dashCup.innerText="🥛";
-
-    diaryCup.classList.add("fill");
-    diaryCup.innerText="🥛";
-
-    waterNow += waterPerCup;
-  }
-
-  if(waterNow < 0) waterNow = 0;
-  if(waterNow > waterGoal)
-    waterNow = waterGoal;
-
-  document.getElementById("waterNow").innerText =
-    waterNow + " มล.";
-
-  // ⭐ sync ทุกอย่าง
-  updateWaterUI();        // วงแดชบอร์ด
-  updateDiaryWaterRing(); // วงไดอารี่
-  saveWaterData();
-}
-
-function syncCupsFromWater(){
-
-  const dashCups =
-    document.querySelectorAll("#waterCups span");
-
-  const diaryCups =
-    document.querySelectorAll("#diaryCups span");
-
-  const filledCount =
-    Math.floor(waterNow / waterPerCup);
-
-  for(let i=0;i<8;i++){
-
-    if(dashCups[i]){
-      if(i < filledCount){
-        dashCups[i].classList.add("fill");
-        dashCups[i].innerText="🥛";
-      }else{
-        dashCups[i].classList.remove("fill");
-        dashCups[i].innerText="＋";
-      }
-    }
-
-    if(diaryCups[i]){
-      if(i < filledCount){
-        diaryCups[i].classList.add("fill");
-        diaryCups[i].innerText="🥛";
-      }else{
-        diaryCups[i].classList.remove("fill");
-        diaryCups[i].innerText="＋";
-      }
-    }
-  }
-}
-
-function updateMacros(){
-
-  const carbPercent =
-    Math.min((carbNow / carbGoal) * 100, 100);
-
-  const proteinPercent =
-    Math.min((proteinNow / proteinGoal) * 100, 100);
-
-  const fatPercent =
-    Math.min((fatNow / fatGoal) * 100, 100);
-
-  carbChartObj.data.datasets[0].data =
-    [carbPercent, 100-carbPercent];
-
-  proteinChartObj.data.datasets[0].data =
-    [proteinPercent, 100-proteinPercent];
-
-  fatChartObj.data.datasets[0].data =
-    [fatPercent, 100-fatPercent];
-
-  carbChartObj.update();
-  proteinChartObj.update();
-  fatChartObj.update();
-
-  document.getElementById("carbText").innerText =
-    `${carbNow} / ${carbGoal} g`;
-
-  document.getElementById("proteinText").innerText =
-    `${proteinNow} / ${proteinGoal} g`;
-
-  document.getElementById("fatText").innerText =
-    `${fatNow} / ${fatGoal} g`;
-}
-
-const diarySlider =
-  document.getElementById("diarySlider");
-
-const diaryDots =
-  document.querySelectorAll(".diary-water-card .dot");
-
-if(diarySlider){
-
-  diarySlider.addEventListener("scroll",()=>{
-
-    const index =
-      Math.round(
-        diarySlider.scrollLeft /
-        diarySlider.offsetWidth
-      );
-
-    diaryDots.forEach(d =>
-      d.classList.remove("active")
-    );
-
-    if(diaryDots[index])
-      diaryDots[index].classList.add("active");
-  });
-
-}
-
-function updateDiaryNutrition(){
-
-  const circumference = 440;
-
-  const percent =
-    Math.min(foodCalories / calorieGoal, 1);
-
-  const offset =
-    circumference - (circumference * percent);
-
-  const calRing =
-    document.getElementById("diaryCalRing");
-
-  if(calRing)
-    calRing.style.strokeDashoffset = offset;
-
-  const calText =
-    document.getElementById("diaryCalText");
-
-  if(calText)
-    calText.innerText =
-      calorieGoal - foodCalories + activityCalories;
-
-  const carbText =
-    document.getElementById("diaryCarbText");
-
-  if(carbText)
-    carbText.innerText =
-      `${carbNow} / ${carbGoal} g`;
-
-  const proteinText =
-    document.getElementById("diaryProteinText");
-
-  if(proteinText)
-    proteinText.innerText =
-      `${proteinNow} / ${proteinGoal} g`;
-
-  const fatText =
-    document.getElementById("diaryFatText");
-
-  if(fatText)
-    fatText.innerText =
-      `${fatNow} / ${fatGoal} g`;
-}
-
-// โหลดค่าน้ำตอนเปิดเว็บ
-// โหลดค่าน้ำตอนเปิดเว็บ
-requestNotificationPermission();
-loadWaterData();
-syncCupsFromWater();
-updateDiaryWaterRing();
-function updateAll(){
-  updateCalorieRing();   // หน้าแดชบอร์ด
-  updateMacros();        // macro dashboard
-  updateDiaryNutrition(); // หน้าไดอารี่
-}
-
-// ทดสอบเพิ่ม แคล
-function addFoodTest(){
-  foodCalories += 500;
-  updateAll();
-}
-
-// // ทดสอบเพิ่มค่า macro
-function addMacroTest(){
-  carbNow += 5;
-  proteinNow += 5;
-  fatNow += 5;
-  updateAll();
-}
-
-function toggleQuickMenu(){
-
-  const menu = document.getElementById("quickMenu");
-
-  if(menu.style.display === "flex"){
-    menu.style.display = "none";
-  }else{
-    menu.style.display = "flex";
-  }
-
+  cursor:pointer;
 }
 
 
-/* ===========================
-   CAMERA SYSTEM
-=========================== */
+/* ปุ่มถ่ายให้เด่น */
 
-let stream;
-
-function openCamera(){
-
-  document.getElementById("quickMenu").style.display="none";
-
-  const cam = document.getElementById("cameraPage");
-  cam.style.display="flex";
-
-  navigator.mediaDevices.getUserMedia({
-    video:{
-      facingMode:"environment"
-    }
-  }).then(function(s){
-
-    stream = s;
-
-    const video = document.getElementById("video");
-    video.srcObject = stream;
-
-  }).catch(function(err){
-
-    alert("เปิดกล้องไม่ได้");
-    console.log(err);
-
-  });
-
+.camera-btn.capture{
+  background:#ffffff;
+  font-size:18px;
 }
 
 
-/* ===========================
-   CAPTURE PHOTO
-=========================== */
-
-function capturePhoto(){
-
-  const video = document.getElementById("video");
-  const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-
-  ctx.drawImage(video,0,0);
-
-  canvas.toBlob(function(blob){
-
-    const image = URL.createObjectURL(blob);
-
-    analyzeFood(image);
-
-  },"image/jpeg",0.7);
-
-}
-
-
-/* ===========================
-   CLOSE CAMERA
-=========================== */
-
-function closeCamera(){
-
-  if(stream){
-    stream.getTracks().forEach(track=>track.stop());
-  }
-
-  document.getElementById("cameraPage").style.display="none";
-
-}
-
-
-
-/* ===========================
-   OPEN GALLERY
-=========================== */
-
-function openGallery(){
-
-  const input = document.getElementById("galleryInput");
-
-  input.value="";
-  input.click();
-
-  input.onchange=function(){
-
-    if(this.files && this.files.length > 0){
-
-      const file = this.files[0];
-
-      processImage(file);
-
-    }
-
-  }
-
-}
-
-
-
-/* ===========================
-   IMAGE RESIZE (RAM SAFE)
-=========================== */
-
-function processImage(file){
-
-  const img = new Image();
-  const url = URL.createObjectURL(file);
-
-  img.src = url;
-
-  img.onload = function(){
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    const MAX = 512;
-
-    let w = img.width;
-    let h = img.height;
-
-    if(w > h){
-      if(w > MAX){
-        h *= MAX / w;
-        w = MAX;
-      }
-    }else{
-      if(h > MAX){
-        w *= MAX / h;
-        h = MAX;
-      }
-    }
-
-    canvas.width = w;
-    canvas.height = h;
-
-    ctx.drawImage(img,0,0,w,h);
-
-    canvas.toBlob(function(blob){
-
-      const image = URL.createObjectURL(blob);
-
-      analyzeFood(image);
-
-      URL.revokeObjectURL(url);
-
-    },"image/jpeg",0.7);
-
-  };
-
-}
-
-
-
-/* ===========================
-   FOOD ANALYSIS DEMO
-=========================== */
-
-function analyzeFood(image){
-
-  document.body.innerHTML = `
-
-  <div class="food-page">
-
-    <div class="food-top">
-      <button class="back-btn" onclick="goBack()">←</button>
-    </div>
-
-    <img src="${image}" class="food-img">
-
-    <h2>Mix salad vegetables</h2>
-
-    <div class="food-cal">
-      <b>240</b> Calories
-    </div>
-
-    <div class="macro-row">
-      <div>19g protein</div>
-      <div>5g carbs</div>
-      <div>8g fat</div>
-    </div>
-
-  </div>
-
-  `;
-
-}
-
-
-
-/* ===========================
-   BACK TO APP
-=========================== */
-
-function goBack(){
-  location.reload();
+/* ปุ่มปิด */
+
+.camera-btn.close{
+  background:#ff4d4d;
+  color:#fff;
 }
