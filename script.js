@@ -1021,40 +1021,38 @@ function processImage(file){
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    // 🔥 ลดขนาดภาพให้เล็กลงมาก
     const MAX = 512;
 
-    let width = img.width;
-    let height = img.height;
+    let w = img.width;
+    let h = img.height;
 
-    if(width > height){
-      if(width > MAX){
-        height *= MAX / width;
-        width = MAX;
+    if(w > h){
+      if(w > MAX){
+        h *= MAX / w;
+        w = MAX;
       }
     }else{
-      if(height > MAX){
-        width *= MAX / height;
-        height = MAX;
+      if(h > MAX){
+        w *= MAX / h;
+        h = MAX;
       }
     }
 
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = w;
+    canvas.height = h;
 
-    ctx.drawImage(img,0,0,width,height);
+    ctx.drawImage(img,0,0,w,h);
 
-    // 🔥 บีบอัดเพิ่ม
-    const resized = canvas.toDataURL("image/jpeg",0.6);
+    canvas.toBlob(function(blob){
 
-    URL.revokeObjectURL(url);
+      const newUrl = URL.createObjectURL(blob);
 
-    analyzeFood(resized);
+      analyzeFood(newUrl);
 
-  };
+      URL.revokeObjectURL(url);
 
-  img.onerror = function(){
-    alert("โหลดรูปไม่ได้");
+    },"image/jpeg",0.6);
+
   };
 
 }
