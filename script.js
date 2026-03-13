@@ -1011,26 +1011,32 @@ function openGallery(){
 /* ลดขนาดรูปก่อนใช้ (แก้ปัญหา RAM) */
 function processImage(file){
 
-  const reader = new FileReader();
   const img = new Image();
+  const url = URL.createObjectURL(file);
 
-  reader.onload = function(e){
-    img.src = e.target.result;
-  };
+  img.src = url;
 
   img.onload = function(){
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    const maxSize = 800;
+    // 🔥 ลดขนาดภาพให้เล็กลงมาก
+    const MAX = 512;
 
     let width = img.width;
     let height = img.height;
 
-    if(width > maxSize){
-      height = height * (maxSize / width);
-      width = maxSize;
+    if(width > height){
+      if(width > MAX){
+        height *= MAX / width;
+        width = MAX;
+      }
+    }else{
+      if(height > MAX){
+        width *= MAX / height;
+        height = MAX;
+      }
     }
 
     canvas.width = width;
@@ -1038,18 +1044,18 @@ function processImage(file){
 
     ctx.drawImage(img,0,0,width,height);
 
-    const resized = canvas.toDataURL("image/jpeg",0.8);
+    // 🔥 บีบอัดเพิ่ม
+    const resized = canvas.toDataURL("image/jpeg",0.6);
 
-    /* วิเคราะห์อาหารทันที */
+    URL.revokeObjectURL(url);
+
     analyzeFood(resized);
 
   };
 
   img.onerror = function(){
-    alert("ไม่สามารถโหลดรูปได้");
+    alert("โหลดรูปไม่ได้");
   };
-
-  reader.readAsDataURL(file);
 
 }
 
