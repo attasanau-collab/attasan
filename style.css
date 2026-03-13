@@ -532,25 +532,34 @@ main{padding-bottom:140px}
 
 #cameraPage{
   position:fixed;
-  inset:0;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
   background:#000;
+
   display:none;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  z-index:999;
+
+  z-index:9999;
 }
 
 #cameraPage video{
   width:100%;
-  height:70vh;
+  height:100%;
   object-fit:cover;
 }
 
 .camera-controls{
   position:absolute;
-  bottom:30px;
+  bottom:40px;
+  left:0;
+  right:0;
+
   display:flex;
+  justify-content:center;
   gap:20px;
 }
 
