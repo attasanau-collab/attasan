@@ -407,12 +407,54 @@
 <nav class="bottom">
   <button onclick="showPage('dashboard')">แดชบอร์ด</button>
   <button onclick="showPage('diary')">ไดอารี่</button>
-  <button class="plus">＋</button>
+  <button class="plus" onclick="toggleQuickMenu()">＋</button>
   <button>ข้อมูลเชิงลึก</button>
   <button onclick="showPage('account')">บัญชี</button>
 </nav>
 
-<script src="script.js"></script>
+<div id="quickMenu" class="quick-menu">
+
+  <div class="quick-grid">
+
+    <div class="quick-item" onclick="openCamera()">
+      📷
+      <span>สแกนอาหาร</span>
+    </div>
+    <input 
+      type="file"
+      id="cameraInput"
+      accept="image/*"
+      capture="environment"
+      style="display:none">
+
+
+    <div class="quick-item" onclick="openGallery()">
+      🍽
+      <span>วิเคราะห์อาหาร</span>
+    </div>
+    <input 
+      type="file"
+      id="galleryInput"
+      accept="image/*"
+      style="display:none">
+
+
+    <div class="quick-item">
+      🤖
+      <span>ถาม AI</span>
+    </div>
+
+
+
+    <div class="quick-item">
+      ⚡
+      <span>บันทึกด่วน</span>
+    </div>
+
+  </div>
+
+</div>
+
 <script src="script.js"></script>
 <div style="display:flex; gap:10px; padding:10px;">
   <button onclick="resetAll()">รีเซ็ตเว็บ</button>
@@ -420,7 +462,7 @@
   <button onclick="addMacroTest()">+ Macro</button>
 </div>
 
+
 </body>
 </html>
-
 
