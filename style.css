@@ -514,3 +514,18 @@ main{padding-bottom:140px}
   font-size:18px;
   cursor:pointer;
 }
+
+.preview-page{
+  padding:20px;
+}
+
+.analyze-btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#000;
+  color:#fff;
+  font-size:16px;
+  margin-top:20px;
+}
