@@ -455,16 +455,16 @@
 
 </div>
 
-<div id="cameraPage" style="display:none; padding:20px; text-align:center;">
+<div id="cameraPage">
 
-  <video id="video" autoplay playsinline style="width:100%; border-radius:20px;"></video>
+  <video id="video" autoplay playsinline></video>
 
-  <br><br>
+  <div class="camera-controls">
+    <button class="camera-btn" onclick="capturePhoto()">📷 ถ่าย</button>
+    <button class="camera-btn" onclick="closeCamera()">✕ ปิด</button>
+  </div>
 
-  <button onclick="capturePhoto()">📷 ถ่ายรูป</button>
-  <button onclick="closeCamera()">ปิด</button>
-
-  <canvas id="canvas" style="display:none;"></canvas>
+  <canvas id="canvas" style="display:none"></canvas>
 
 </div>
 
