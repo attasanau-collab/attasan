@@ -962,6 +962,7 @@ function toggleQuickMenu(){
 
 
 /* เปิดกล้อง */
+/* เปิดกล้อง */
 function openCamera(){
 
   const input = document.getElementById("cameraInput");
@@ -974,9 +975,8 @@ function openCamera(){
     if(this.files && this.files.length > 0){
 
       const file = this.files[0];
-      const img = URL.createObjectURL(file);
 
-      openPreviewPage(img);
+      processImage(file);
 
     }
 
@@ -998,9 +998,8 @@ function openGallery(){
     if(this.files && this.files.length > 0){
 
       const file = this.files[0];
-      const img = URL.createObjectURL(file);
 
-      openPreviewPage(img);
+      processImage(file);
 
     }
 
@@ -1009,32 +1008,54 @@ function openGallery(){
 }
 
 
-/* หน้า Preview รูป */
-function openPreviewPage(image){
+/* ลดขนาดรูปก่อนใช้ (แก้ปัญหา RAM) */
+function processImage(file){
 
-  document.body.innerHTML = `
-  
-  <div class="preview-page">
+  const reader = new FileReader();
+  const img = new Image();
 
-    <div class="food-top">
-      <button class="back-btn" onclick="goBack()">←</button>
-    </div>
+  reader.onload = function(e){
+    img.src = e.target.result;
+  };
 
-    <img src="${image}" class="food-img">
+  img.onload = function(){
 
-    <button class="analyze-btn" onclick="openFoodPage('${image}')">
-      วิเคราะห์อาหาร
-    </button>
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
-  </div>
+    const maxSize = 800;
 
-  `;
+    let width = img.width;
+    let height = img.height;
+
+    if(width > maxSize){
+      height = height * (maxSize / width);
+      width = maxSize;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.drawImage(img,0,0,width,height);
+
+    const resized = canvas.toDataURL("image/jpeg",0.8);
+
+    /* วิเคราะห์อาหารทันที */
+    analyzeFood(resized);
+
+  };
+
+  img.onerror = function(){
+    alert("ไม่สามารถโหลดรูปได้");
+  };
+
+  reader.readAsDataURL(file);
 
 }
 
 
-/* หน้าแสดงอาหาร (ของเดิมเป้) */
-function openFoodPage(image){
+/* วิเคราะห์อาหาร (ตัวอย่าง demo) */
+function analyzeFood(image){
 
   document.body.innerHTML = `
   
@@ -1055,6 +1076,7 @@ function openFoodPage(image){
     <div class="macro-row">
       <div>19g protein</div>
       <div>5g carbs</div>
+      <div>8g fat</div>
     </div>
 
   </div>
