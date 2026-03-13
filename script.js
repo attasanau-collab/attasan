@@ -972,7 +972,7 @@ function openCamera(){
 
     if(this.files && this.files[0]){
 
-      processImage(this.files[0]);   // ใช้ resize
+      processImage(this.files[0]);   // ย่อรูปก่อน
 
     }
 
@@ -1001,7 +1001,7 @@ function openGallery(){
 }
 
 
-/* ลดขนาดรูป */
+/* ลดขนาดรูป (แก้ปัญหา RAM เต็ม) */
 function processImage(file){
 
   const img = new Image();
@@ -1035,7 +1035,7 @@ function processImage(file){
 }
 
 
-/* หน้าอาหาร */
+/* หน้าแสดงอาหาร */
 function openFoodPage(image){
 
   document.body.innerHTML = `
