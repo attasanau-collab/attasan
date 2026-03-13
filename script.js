@@ -948,7 +948,124 @@ function addMacroTest(){
   updateAll();
 }
 
+function toggleQuickMenu(){
 
+  const menu = document.getElementById("quickMenu");
 
+  if(menu.style.display === "flex"){
+    menu.style.display = "none";
+  }else{
+    menu.style.display = "flex";
+  }
 
+}
 
+function openCamera(){
+
+  const input = document.getElementById("cameraInput");
+
+  input.click();
+
+  input.onchange = function(){
+
+    if(this.files && this.files[0]){
+
+      const img = URL.createObjectURL(this.files[0]);
+
+      openFoodPage(img);
+
+    }
+
+  }
+
+}
+
+function openCamera(){
+
+  const input = document.getElementById("cameraInput");
+
+  input.click();
+
+  input.onchange = function(){
+
+    if(this.files && this.files[0]){
+
+      const img = URL.createObjectURL(this.files[0]);
+      openFoodPage(img);
+
+    }
+
+  }
+
+}
+
+function openGallery(){
+
+  const input = document.getElementById("galleryInput");
+
+  input.click();
+
+  input.onchange = function(){
+
+    if(this.files && this.files[0]){
+
+      const img = URL.createObjectURL(this.files[0]);
+      openFoodPage(img);
+
+    }
+
+  }
+
+}
+
+function openFoodPage(image){
+
+  document.body.innerHTML = `
+  
+  <div class="food-page">
+
+    <div class="food-top">
+      <button class="back-btn" onclick="goBack()"><</button>
+    </div>
+
+    <img src="${image}" class="food-img">
+
+    <h2>Mix salad vegetables</h2>
+
+    <div class="food-cal">
+      <b>240</b> Calories
+    </div>
+
+    <div class="macro-row">
+      <div>19g protein</div>
+      <div>5g carbs</div>
+    </div>
+
+  </div>
+
+  `;
+
+}
+
+function goBack(){
+  location.reload();
+}
+
+function openCamera(){
+
+  const input = document.getElementById("cameraInput");
+
+  input.click();
+
+  input.onchange = function(){
+
+    if(this.files && this.files[0]){
+
+      const img = URL.createObjectURL(this.files[0]);
+      openFoodPage(img);
+
+    }
+
+  }
+
+}
