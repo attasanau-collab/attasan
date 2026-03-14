@@ -1,14 +1,16 @@
 const express = require("express");
 const path = require("path");
+require("dotenv").config();
+const cors = require("cors");
+const fetch = require("node-fetch");
 
 const app = express();
 
 app.use(express.static(__dirname));
-
-app.use(require("cors")());
+app.use(cors());
 app.use(express.json());
 
-const API_KEY = "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";
+const API_KEY = process.env.OPENROUTER_API_KEY;
 
 app.post("/api/ai", async (req,res)=>{
 
@@ -28,8 +30,8 @@ app.post("/api/ai", async (req,res)=>{
           model: "deepseek/deepseek-chat",
           messages:[
             {
-                role:"system",
-                content:"คุณคือผู้ช่วยด้านอาหารและโภชนาการ ตอบเป็นภาษาไทยเสมอ และห้ามใช้ Markdown เช่น ** หรือ * หรือ # ให้ตอบเป็นข้อความธรรมดา จัดบรรทัดให้อ่านง่าย"
+              role:"system",
+              content:"คุณคือผู้ช่วยด้านอาหารและโภชนาการ ตอบเป็นภาษาไทยเสมอ และห้ามใช้ Markdown เช่น ** หรือ * หรือ # ให้ตอบเป็นข้อความธรรมดา จัดบรรทัดให้อ่านง่าย"
             },
             {
               role:"user",
@@ -70,8 +72,8 @@ app.post("/api/ai", async (req,res)=>{
 
 });
 
-app.listen(3000,()=>{
+const PORT = process.env.PORT || 3000;
 
-  console.log("AI server running (OpenRouter)");
-
+app.listen(PORT, () => {
+  console.log("AI server running");
 });
