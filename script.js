@@ -1224,3 +1224,64 @@ function openAI(){
   ai.style.display = "flex";
 
 }
+
+/* ==========================
+   AI CHAT SYSTEM
+========================== */
+
+async function sendAI(){
+
+  const input = document.getElementById("aiInput");
+  const chat = document.getElementById("aiChat");
+
+  const message = input.value.trim();
+
+  if(message === "") return;
+
+  // แสดงข้อความผู้ใช้
+  chat.innerHTML += `
+  <div class="ai-msg" style="margin-left:auto;background:#000;color:#fff">
+    ${message}
+  </div>
+  `;
+
+  input.value = "";
+
+  try{
+
+    const res = await fetch("http://localhost:3000/api/ai",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body: JSON.stringify({
+        message: message
+      })
+
+    });
+
+    const data = await res.json();
+
+    // แสดงคำตอบ AI
+    chat.innerHTML += `
+    <div class="ai-msg">
+    ${marked.parse(data.reply)}
+    </div>
+    `;
+
+    chat.scrollTop = chat.scrollHeight;
+
+  }catch(err){
+
+    chat.innerHTML += `
+    <div class="ai-msg">
+      AI server ยังไม่เปิด
+    </div>
+    `;
+
+  }
+
+}
