@@ -25,7 +25,7 @@ app.post("/api/ai", async (req,res)=>{
           "Content-Type":"application/json"
         },
         body: JSON.stringify({
-          model: "google/gemini-2.0-flash",
+          model: "openai/gpt-4o-mini",
           messages:[
             {
               role:"system",
