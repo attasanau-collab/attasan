@@ -1285,3 +1285,18 @@ async function sendAI(){
   }
 
 }
+
+/* ===== กด Enter ส่งข้อความ ===== */
+
+const aiInput = document.getElementById("aiInput");
+
+aiInput.addEventListener("keydown", function(e){
+
+  if(e.key === "Enter" && !e.shiftKey){
+
+    e.preventDefault();
+    sendAI();
+
+  }
+
+});
