@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 require("dotenv").config();
 const cors = require("cors");
-const fetch = require("node-fetch");
 
 const app = express();
 
@@ -24,18 +23,20 @@ app.post("/api/ai", async (req,res)=>{
         method:"POST",
         headers:{
           "Authorization": `Bearer ${API_KEY}`,
-          "Content-Type":"application/json"
+          "Content-Type":"application/json",
+          "HTTP-Referer":"https://attasan-1.onrender.com",
+          "X-Title":"Attasan AI"
         },
         body: JSON.stringify({
-          model: "google/gemini-2.0-flash",
+          model:"google/gemini-2.0-flash",
           messages:[
             {
               role:"system",
-              content:"คุณคือผู้ช่วยด้านอาหารและโภชนาการ ตอบเป็นภาษาไทยเสมอ และห้ามใช้ Markdown เช่น ** หรือ * หรือ # ให้ตอบเป็นข้อความธรรมดา จัดบรรทัดให้อ่านง่าย"
+              content:"คุณคือผู้ช่วยด้านอาหารและโภชนาการ ตอบเป็นภาษาไทยเสมอ และห้ามใช้ Markdown"
             },
             {
               role:"user",
-              content: message
+              content:message
             }
           ]
         })
