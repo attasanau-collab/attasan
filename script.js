@@ -1249,7 +1249,7 @@ async function sendAI(){
 
   try{
 
-    const res = await fetch("/api/ai")",{
+    const res = await fetch("/api/ai",{
 
       method:"POST",
 
