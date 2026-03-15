@@ -1046,17 +1046,13 @@ function capturePhoto(){
 
   ctx.drawImage(video,0,0);
 
-  canvas.toBlob(function(blob){
+  // ⭐ แปลงเป็น base64
+  const imageBase64 = canvas.toDataURL("image/jpeg");
 
-    const image = URL.createObjectURL(blob);
-
-    analyzeFood(image);
-
-  },"image/jpeg",0.8);
+  // ⭐ ส่งให้ AI วิเคราะห์
+  analyzeFood(imageBase64);
 
 }
-
-
 /* ===========================
    CLOSE CAMERA
 =========================== */
@@ -1156,35 +1152,88 @@ function processImage(file){
    FOOD ANALYSIS DEMO
 =========================== */
 
-function analyzeFood(image){
+async function analyzeFood(image){
 
+  // ⭐ สร้างหน้า UI ก่อน
   document.body.innerHTML = `
 
   <div class="food-page">
 
     <div class="food-top">
-      <button class="back-btn" onclick="goBack()">←</button>
+      <button class="back-btn" onclick="goBack()">✕</button>
     </div>
 
     <img src="${image}" class="food-img">
 
-    <h2>Mix salad vegetables</h2>
+    <h2 id="foodName">Analyzing...</h2>
 
-    <div class="food-cal">
-      <b>240</b> Calories
+    <div id="calories" class="food-cal">
+      <b>...</b> Calories
     </div>
 
     <div class="macro-row">
-      <div>19g protein</div>
-      <div>5g carbs</div>
-      <div>8g fat</div>
+      <div id="protein">...</div>
+      <div id="carbs">...</div>
+      <div id="fat">...</div>
     </div>
 
   </div>
 
   `;
 
+  // ⭐ ถ้าเป็น blob → แปลงเป็น base64
+  if(image.startsWith("blob:")){
+
+    const res = await fetch(image);
+    const blob = await res.blob();
+
+    const reader = new FileReader();
+
+    reader.onload = function(){
+      analyzeFood(reader.result);
+    };
+
+    reader.readAsDataURL(blob);
+    return;
+  }
+
+  // ⭐ ส่งไป AI
+  const res = await fetch("api/food-ai",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      image:image
+    })
+  });
+
+  const data = await res.json();
+
+  console.log("FOOD AI:",data);
+
+  // ⭐ ใส่ค่าที่ AI วิเคราะห์กลับหน้าเว็บ
+  if(data.food_name){
+
+    document.getElementById("foodName").innerText =
+      data.food_name;
+
+    document.getElementById("calories").innerHTML =
+      "<b>"+data.calories+"</b> Calories";
+
+    document.getElementById("protein").innerText =
+      data.protein+"g protein";
+
+    document.getElementById("carbs").innerText =
+      data.carbs+"g carbs";
+
+    document.getElementById("fat").innerText =
+      data.fat+"g fat";
+
+  }
+
 }
+
 
 
 /* ===========================
@@ -1249,7 +1298,7 @@ async function sendAI(){
 
   try{
 
-    const res = await fetch("/api/ai",{
+    const res = await fetch("api/ai",{
 
       method:"POST",
 
@@ -1300,3 +1349,40 @@ aiInput.addEventListener("keydown", function(e){
   }
 
 });
+
+async function analyzeFoodAI(imageBase64){
+
+  const res = await fetch("api/food-ai",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      image:imageBase64
+    })
+  });
+
+  const data = await res.json();
+
+  console.log("FOOD AI:",data);
+
+  if(data.food_name){
+
+    document.getElementById("foodName").innerText =
+      data.food_name;
+
+    document.getElementById("calories").innerHTML =
+      "<b>"+data.calories+"</b> Calories";
+
+    document.getElementById("protein").innerText =
+      data.protein+"g protein";
+
+    document.getElementById("carbs").innerText =
+      data.carbs+"g carbs";
+
+    document.getElementById("fat").innerText =
+      data.fat+"g fat";
+
+  }
+
+}
