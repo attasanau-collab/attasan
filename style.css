@@ -1343,3 +1343,44 @@ main{
 main:has(#page3.active){
   padding-bottom:100px !important;
 }
+
+/* ⭐ ทำให้การ์ดหน้า insights ดูพรีเมียม */
+#page3 .card{
+  background:#fff;
+  border-radius:22px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+
+#page3{
+  padding:8px 0 100px;
+}
+
+#page3 .card{
+  margin:10px 12px;
+}
+
+#page3 .week span{
+  background:#f2f2f2;
+  border-radius:14px;
+  padding:10px 8px;
+  transition:.2s;
+}
+
+#page3 .week .active{
+  background:#000;
+  color:#fff;
+  transform:scale(1.05);
+}
+
+#page3 canvas{
+  background:#fafafa;
+  border-radius:16px;
+  padding:10px;
+}
+
+#page3 .card:last-child,
+#page3 .card:nth-last-child(2){
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
