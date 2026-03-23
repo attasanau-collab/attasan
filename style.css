@@ -1,3 +1,14 @@
+/* ⭐ FIX SCROLL */
+main{
+  padding-bottom:0px !important; /* ดันให้พ้น navbar */
+}
+
+/* กัน body ล้น */
+html, body{
+  height:100%;
+  overflow-x:hidden;
+}
+
 *{font-family:sans-serif;box-sizing:border-box}
 body{margin:0;background:#f6f6f6}
 
@@ -94,18 +105,11 @@ main{padding-bottom:140px}
 }
 
 /* BOTTOM NAV */
-.bottom {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  background: #fff;
-  padding: 10px 0 25px 0; /* เพิ่ม padding ด้านล่างเผื่อปุ่ม Home ของ iPhone (Safe Area) */
-  border-top: 1px solid #ddd;
-  z-index: 1000;
+.bottom{
+  position:fixed;bottom:0;width:100%;
+  display:flex;justify-content:space-around;
+  background:#fff;padding:10px 0;border-top:1px solid #ddd
 }
-
 .bottom button{background:none;border:none;font-size:14px}
 .plus{
   background:#000 !important;color:#fff;
@@ -1182,19 +1186,8 @@ body.camera-open{
 }
 .water-cups-mini span.filled::after { height: 100%; }
 
-main {
-  padding-bottom: 100px; /* เพิ่มพื้นที่เผื่อให้แถบเมนูด้านล่าง */
-  overflow-y: auto;      /* ให้เลื่อนในแนวตั้งได้อิสระ */
-  -webkit-overflow-scrolling: touch; /* ให้การเลื่อนบน iPhone ลื่นไหล */
-}
-
-/* ปรับแก้ Body เพื่อไม่ให้เกิดอาการเลื่อนกระตุกบนมือถือ */
-body {
-  margin: 0;
-  background: #f6f6f6;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+main{
+  padding-bottom:0px
 }
 
 /* ===== หน้า บัญชี (Account) ===== */
