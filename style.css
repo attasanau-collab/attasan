@@ -1266,3 +1266,12 @@ main{
   margin-top:-75px;
 }
 
+.diary-header{
+  display:flex;
+  justify-content:flex-end;
+  padding-top:30px; /* ⭐ ดันลงแบบไม่กระทบ layout มาก */
+}
+
+.calendar-btn{
+  margin-top:-6px;
+}

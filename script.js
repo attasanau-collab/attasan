@@ -1514,14 +1514,21 @@ function openCalendar(){
   const btn = document.querySelector(".calendar-btn");
 
   flatpickr(btn, {
+    locale: "th",
     defaultDate: selectedDate,
     dateFormat: "Y-m-d",
-    position: "auto center", // ⭐ จัดตำแหน่งให้กลางปุ่ม
-    static: false,
 
-    onChange: function(selectedDates, dateStr){
+    position: "auto center",
+    disableMobile: true, // ⭐ ใส่ตรงนี้เลย
+
+    onReady: function(selectedDates, dateStr, instance){
+      convertToThaiYear(instance);
+    },
+
+    onChange: function(selectedDates, dateStr, instance){
       if(dateStr){
         loadWaterByDate(dateStr);
+        convertToThaiYear(instance);
       }
     }
   }).open();
@@ -1553,28 +1560,7 @@ function formatThaiDate(dateStr){
   return `${day} ${month} ${year}`;
 }
 
-function openCalendar(){
 
-  const btn = document.querySelector(".calendar-btn");
-
-  flatpickr(btn, {
-    locale: "th",
-    defaultDate: selectedDate,
-    dateFormat: "Y-m-d",
-
-    onReady: function(selectedDates, dateStr, instance){
-      convertToThaiYear(instance);
-    },
-
-    onChange: function(selectedDates, dateStr, instance){
-
-      if(dateStr){
-        loadWaterByDate(dateStr);
-        convertToThaiYear(instance); // ⭐ สำคัญ
-      }
-    }
-  }).open();
-}
 
 function convertToThaiYear(instance){
 
