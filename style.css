@@ -1314,3 +1314,31 @@ main{
   position:relative;
   top:-100px;   /* ⭐ ขยับปุ่มขึ้นตาม */
 }
+
+/* ===== PAGE3 FIX ===== */
+
+#page3{
+  padding-top:10px;
+}
+
+/* การ์ดหน้า insights ไม่ให้ลอย */
+#page3 .card{
+  margin-top:10px;
+}
+
+/* ตัวแรกไม่ต้องเว้น */
+#page3 .card:first-child{
+  margin-top:0;
+}
+
+/* แถบวันใน insights */
+#page3 .week{
+  width:100%;
+  max-width:100%;
+  justify-content:space-between;
+}
+
+/* กัน layout เพี้ยน */
+#page3 *{
+  box-sizing:border-box;
+}
