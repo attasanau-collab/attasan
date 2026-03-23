@@ -7,6 +7,9 @@
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 </head>
 <body>
     <!-- Popup แก้ไขเป้าหมาย -->
@@ -77,11 +80,10 @@
     </div>
 
     <div class="side-info">
-      <div>🎯 เป้าหมาย<br><b>1952</b></div>
-      <div>🍽 อาหาร<br><b>0</b></div>
-      <div>🏃 กิจกรรม<br><b>0</b></div>
+      <div>🎯 เป้าหมาย<br><b id="goalCalText">0</b></div>
+      <div>🍽 อาหาร<br><b id="foodCalText">0</b></div>
+      <div>🏃 กิจกรรม<br><b id="activityCalText">0</b></div>
     </div>
-  </div>
 </div>
 
 <!-- 2 สารอาหาร (ปัดได้) -->
@@ -193,15 +195,6 @@
   <h1 id="waterNow">0 มล.</h1>
   <p id="waterGoal">เป้าหมาย 2,000 มล.</p>
   <div class="cups" id="waterCups">
-    <span onclick="toggleWaterAll(0)">＋</span>
-    <span onclick="toggleWaterAll(1)">＋</span>
-    <span onclick="toggleWaterAll(2)">＋</span>
-    <span onclick="toggleWaterAll(3)">＋</span>
-    <span onclick="toggleWaterAll(4)">＋</span>
-    <span onclick="toggleWaterAll(5)">＋</span>
-    <span onclick="toggleWaterAll(6)">＋</span>
-    <span onclick="toggleWaterAll(7)">＋</span>
-  </div>
 </div>
 
 <div id="waterPopup" class="popup">
@@ -214,12 +207,22 @@
 
     <div class="popup-item">
       ปริมาณที่บริโภค
-      <select id="waterAmount">
-        <option value="100">100 ml</option>
-        <option value="150">150 ml</option>
-        <option value="250">250 ml</option>
-      </select>
-    </div>
+    <div style="display:flex; gap:6px;">
+
+    <select id="waterAmount">
+      <option value="100">100 ml</option>
+      <option value="150">150 ml</option>
+      <option value="250">250 ml</option>
+      <option value="custom">กำหนดเอง</option> <!-- ⭐ เพิ่ม -->
+    </select>
+
+    <!-- ⭐ ช่องพิมเอง -->
+    <input type="number"
+         id="customWater"
+         placeholder="ml"
+         style="width:80px; display:none;">
+  </div>
+</div>
 
     <div class="popup-item">
       เป้าหมายรายวัน (มล.)
@@ -254,15 +257,24 @@
 
   <!-- แถบวัน -->
   <div class="week diary-week" id="diaryWeek">
-    <span>จ<div></div></span>
-    <span>อ<div></div></span>
-    <span>พ<div></div></span>
-    <span>พฤ<div></div></span>
-    <span>ศ<div></div></span>
-    <span>ส<div></div></span>
-    <span>อ<div></div></span>
+    <span onclick="selectDay(0)">จ<div></div></span>
+    <span onclick="selectDay(1)">อ<div></div></span>
+    <span onclick="selectDay(2)">พ<div></div></span>
+    <span onclick="selectDay(3)">พฤ<div></div></span>
+    <span onclick="selectDay(4)">ศ<div></div></span>
+    <span onclick="selectDay(5)">ส<div></div></span>
+    <span onclick="selectDay(6)">อ<div></div></span>
   </div>
+  
 
+  <div class="card-header diary-header">
+    <h3>ไดอารี่</h3>
+
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span id="selectedDateText">--/--/----</span>
+        <span class="calendar-btn" onclick="openCalendar()">📅</span>
+      </div>
+  </div>
 
 
   <!-- การ์ดสรุปน้ำ -->
@@ -337,80 +349,81 @@
 
 
   <!-- มื้ออาหาร -->
-  <div class="card diary-meal-card">
-    <h3>มื้ออาหาร</h3>
+  <div class="meal-row">
+    <span>🍳 อาหารเช้า</span>
+    <b id="breakfastCal">0 kcal</b>
+  </div>
 
-    <div class="meal-row">
-      <span>🍳 อาหารเช้า</span>
-      <b>0 kcal</b>
-    </div>
+  <div class="meal-row">
+    <span>🍛 อาหารกลางวัน</span>
+    <b id="lunchCal">0 kcal</b>
+  </div>
 
-    <div class="meal-row">
-      <span>🍛 อาหารกลางวัน</span>
-      <b>0 kcal</b>
-    </div>
+  <div class="meal-row">
+    <span>🍝 อาหารเย็น</span>
+    <b id="dinnerCal">0 kcal</b>
+  </div>
 
-    <div class="meal-row">
-      <span>🍝 อาหารเย็น</span>
-      <b>0 kcal</b>
-    </div>
+  <div class="meal-row">
+    <span>🍪 อาหารว่าง</span>
+    <b id="snackCal">0 kcal</b>
+  </div>
 
-    <div class="meal-row">
-      <span>🍪 อาหารว่าง</span>
-      <b>0 kcal</b>
-    </div>
-
-    <button class="add-btn">+ บันทึกอาหาร</button>
-</div>
 
 <!-- น้ำ -->
 <div class="card">
 
   <h3>น้ำ (มล.)</h3>
 
-  <div class="cups" id="diaryCups">
-    <span onclick="toggleWaterAll(0)">＋</span>
-    <span onclick="toggleWaterAll(1)">＋</span>
-    <span onclick="toggleWaterAll(2)">＋</span>
-    <span onclick="toggleWaterAll(3)">＋</span>
-    <span onclick="toggleWaterAll(4)">＋</span>
-    <span onclick="toggleWaterAll(5)">＋</span>
-    <span onclick="toggleWaterAll(6)">＋</span>
-    <span onclick="toggleWaterAll(7)">＋</span>
-  </div>
+  <div class="cups" id="diaryCups"></div>
 
 </div>
 
-  <button class="add-btn" onclick="addDiaryWater()">
-  + บันทึกการดื่มน้ำ
-  </button>
-
-</div>
-
-</section>
-
-
-<section id="account" class="page">
-  <div class="card">
-    <h2>บัญชี</h2>
-    <ul>
-      <li>สมัคร / Login</li>
-      <li>ข้อมูลส่วนตัว</li>
-      <li>ปรับเป้าหมาย</li>
-      <li>การตั้งค่า</li>
-      <li>ออกจากระบบ</li>
-    </ul>
-  </div>
 </section>
 
 </main>
+
+<div id="foodFullPage" class="food-full">
+
+  <!-- TOP BAR -->
+  <div class="food-topbar">
+    <span onclick="closeFoodPage()">✕</span>
+    <b>บันทึกอาหาร</b>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="food-content">
+
+    <input placeholder="ชื่ออาหาร" id="foodName">
+
+    <div class="row">
+      <input type="number" placeholder="ปริมาณ" id="foodAmount">
+      <select id="foodUnit">
+        <option>จาน</option>
+        <option>ชิ้น</option>
+        <option>ถ้วย</option>
+      </select>
+    </div>
+
+    <input type="number" placeholder="แคลอรี" id="foodCal">
+    <input type="number" placeholder="คาร์บ" id="foodCarb">
+    <input type="number" placeholder="โปรตีน" id="foodProtein">
+    <input type="number" placeholder="ไขมัน" id="foodFat">
+
+    <button onclick="saveFood()">บันทึก</button>
+
+  </div>
+
+</div>
 
 <nav class="bottom">
   <button onclick="showPage('dashboard')">แดชบอร์ด</button>
   <button onclick="showPage('diary')">ไดอารี่</button>
   <button class="plus" onclick="toggleQuickMenu()">＋</button>
-  <button>ข้อมูลเชิงลึก</button>
-  <button onclick="showPage('account')">บัญชี</button>
+  <button onclick="showPage('page3')">ข้อมูลเชิงลึก</button>
+  <button onclick="showPage('page4')">
+  บัญชี
+</button>
 </nav>
 
 <div id="quickMenu" class="quick-menu">
@@ -436,9 +449,10 @@
     </div>
 
     <!-- บันทึกด่วน -->
-    <div class="quick-item">
+    <div class="quick-item" onclick="openFoodPage()">
       ⚡
       <span>บันทึกด่วน</span>
+      
     </div>
 
   </div>
@@ -522,14 +536,95 @@ style="display:none">
 
 </div>
 
+<section id="page3" class="page">
+  <div class="calendar-strip" id="calendarStrip"></div>
+
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="icon-circle cal-icon">🔥</div>
+      <div>
+        <div class="insight-label">แคลอรี่เฉลี่ย</div>
+        <div class="insight-value" id="insightAvgCal">0 <small>kcal</small></div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="icon-circle burn-icon">⚡</div>
+      <div>
+        <div class="insight-label">แคลอรี่ที่เผาผลาญ</div>
+        <div class="insight-value" id="insightBurnCal">0 <small>kcal</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card stat-card">
+    <h3>สถิติ</h3>
+    <canvas id="insightsChart"></canvas>
+  </div>
+
+  <div class="insights-grid">
+    <div class="insight-card weight-card">
+      <div class="insight-label">น้ำหนัก</div>
+      <div class="insight-value">
+        <span id="insightWeight">65</span> <small>กก.</small>
+      </div>
+      <div class="insight-sub">BMI <span id="insightBMI">21.2</span></div>
+    </div>
+
+    <div class="insight-card water-card">
+      <div class="insight-label">ดื่มน้ำเฉลี่ยต่อวัน</div>
+      <div class="insight-value" id="insightAvgWater">0 <small>มล.</small></div>
+      <div class="water-cups-mini" id="insightWaterCups"></div>
+    </div>
+  </div>
+
+</section>
+
+<div id="page4" class="page">
+
+  <div class="card profile-card" style="text-align: center; margin-top: 15px; padding-top: 25px;">
+    <div class="profile-img">👤</div>
+    <h3 style="margin: 15px 0 5px 0;">ผู้ใช้งานทั่วไป</h3>
+    <div class="sub">user@example.com</div>
+  </div>
+
+  <div class="card account-menu">
+    <div class="menu-item" onclick="document.getElementById('goalPopup').style.display='flex'">
+      <span class="menu-icon">🎯</span>
+      <span class="menu-text">แก้ไขเป้าหมายแคลอรี่</span>
+      <span class="menu-arrow">›</span>
+    </div>
+    <div class="menu-item">
+      <span class="menu-icon">🔔</span>
+      <span class="menu-text">การแจ้งเตือน</span>
+      <span class="menu-arrow">›</span>
+    </div>
+    <div class="menu-item">
+      <span class="menu-icon">⚙️</span>
+      <span class="menu-text">การตั้งค่าทั่วไป</span>
+      <span class="menu-arrow">›</span>
+    </div>
+  </div>
+
+  <div class="card account-menu">
+    <div class="menu-item logout" onclick="logout()">
+      <span class="menu-icon">🚪</span>
+        <span class="menu-text" style="color: #f44336;">ออกจากระบบ</span>
+    </div>
+  </div>
+</div>
+
+
+
 
 <script src="script.js"></script>
 
-<div style="display:flex; gap:10px; padding:10px;">
-  <button onclick="resetAll()">รีเซ็ตเว็บ</button>
-  <button onclick="addFoodTest()">+500 kcal</button>
-  <button onclick="addMacroTest()">+ Macro</button>
-</div>
+
+<button class="save-btn" onclick="logout()">
+  ออกจากระบบ
+</button>
+
+
 
 </body>
 </html>

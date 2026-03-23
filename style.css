@@ -194,8 +194,29 @@ main{padding-bottom:140px}
 }
 
 .cups span.fill{
+  transform:scale(1.1); /* เอาแค่ขยายพอ */
+}
+
+.cups span.fill .water{
+  height:100%;
+}
+
+.cup{
+  width:30px;
+  height:40px;
+  border:2px solid #aaa;
+  border-radius:6px 6px 10px 10px;
+  position:relative;
+  overflow:hidden; /* ⭐ ตัวนี้สำคัญสุด */
+}
+
+.cup .water{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:0%;
   background:#4fc3f7;
-  transform:scale(1.2);
+  transition:height 0.3s ease;
 }
 
 @keyframes pop{
@@ -486,6 +507,8 @@ main{padding-bottom:140px}
 
 .food-img{
   width:100%;
+  height:260px;        /* ⭐ กำหนดความสูงตายตัว */
+  object-fit:cover;    /* ⭐ ตัดภาพให้พอดี */
   border-radius:20px;
   margin-bottom:15px;
 }
@@ -889,5 +912,323 @@ body.camera-open{
 
 .ai-msg h3{
   margin-top:8px;
+}
+
+.diary-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:10px 12px;
+}
+
+.calendar-btn{
+  font-size:18px;
+  padding:6px 10px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:#fff;
+  cursor:pointer;
+}
+
+.calendar-btn:active{
+  background:#eee;
+}
+
+.calendar-btn{
+  position:absolute;
+  top:25px; /* ปรับได้ */
+  right:20px;
+}
+
+.flatpickr-calendar{
+  border-radius:20px !important;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2) !important;
+}
+
+.flatpickr-day.selected{
+  background:#4fc3f7 !important;
+  border:none;
+}
+
+.flatpickr-calendar{
+  border-radius:20px !important;
+  box-shadow:0 15px 40px rgba(0,0,0,0.2) !important;
+  border:none !important;
+}
+
+.flatpickr-months{
+  background:#fff;
+  border-radius:20px 20px 0 0;
+}
+
+.flatpickr-day.selected{
+  background:#4fc3f7 !important;
+  border:none;
+}
+
+.flatpickr-day.today{
+  border-color:#4fc3f7;
+}
+
+.flatpickr-calendar{
+  margin-top:10px;
+}
+
+#selectedDateText{
+  display:block;
+  text-align:right;
+  margin-top:-260px; /* 🔥 ปรับเลขนี้ได้ */
+  margin-right:60px;
+}
+
+.flatpickr-weekday{
+  font-weight:bold;
+}
+
+#customWater{
+  text-align:center;
+}
+
+.food-full{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  z-index:9999;
+
+  display:none;
+  flex-direction:column;
+}
+
+.food-topbar{
+  display:flex;
+  align-items:center;
+  gap:15px;
+
+  padding:15px;
+  border-bottom:1px solid #eee;
+  font-size:18px;
+}
+
+.food-topbar span{
+  font-size:20px;
+  cursor:pointer;
+}
+
+.food-content{
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.food-content input,
+.food-content select{
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:15px;
+}
+
+.food-content button{
+  margin-top:10px;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#000;
+  color:#fff;
+  font-size:16px;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+}
+
+.food-full{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  z-index:9999;
+  display:none;
+  flex-direction:column;
+}
+
+.cup .water{
+  height:0%;
+  transition:height 0.4s ease;
+}
+
+/* ===== แก้วน้ำใส ===== */
+.cup{
+  width:30px;
+  height:40px;
+  border:2px solid #aaa;
+  border-radius:6px 6px 10px 10px;
+  position:relative;
+  overflow:hidden;
+  background:rgba(255,255,255,0.3);
+}
+
+/* น้ำ */
+.cup .water{
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:0%;
+  background:linear-gradient(
+    to top,
+    #4fc3f7,
+    #81d4fa
+  );
+  transition:height 0.3s ease;
+}
+
+/* ตอนกด */
+.cups span.fill .water{
+  height:100%;
+}
+
+/* ===== หน้า INSIGHTS (ข้อมูลเชิงลึก) ===== */
+.calendar-strip {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  scrollbar-width: none; /* ซ่อน scrollbar ใน Firefox */
+}
+.calendar-strip::-webkit-scrollbar { 
+  display: none; /* ซ่อน scrollbar ใน Chrome/Safari */
+}
+.cal-day {
+  min-width: 55px;
+  text-align: center;
+  padding: 12px 10px;
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  transition: 0.2s;
+}
+.cal-day.active {
+  background: #000;
+  color: #fff;
+}
+.cal-day .day-name { font-size: 12px; margin-bottom: 5px; opacity: 0.8; }
+.cal-day .day-num { font-size: 18px; font-weight: bold; }
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 15px;
+  margin-bottom: 12px;
+}
+.insight-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+.insight-card.weight-card, .insight-card.water-card {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.icon-circle {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.cal-icon { background: #ffebee; color: #f44336; }
+.burn-icon { background: #fff8e1; color: #ff9800; }
+
+.insight-label { font-size: 13px; color: #777; }
+.insight-value { font-size: 20px; font-weight: bold; }
+.insight-value small { font-size: 12px; color: #999; font-weight: normal; }
+.insight-sub { 
+  font-size: 12px; color: #4caf50; 
+  background: #e8f5e9; padding: 3px 8px; 
+  border-radius: 10px; margin-top: 4px; 
+}
+
+.stat-card { padding: 20px 15px; margin: 0 15px 15px 15px; }
+.stat-card h3 { margin: 0 0 15px 0; font-size: 16px; }
+
+/* แก้วน้ำจิ๋ว */
+.water-cups-mini {
+  display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap;
+}
+.water-cups-mini span {
+  width: 14px; height: 20px; background: #e0f7fa; 
+  border-radius: 2px 2px 6px 6px;
+  display: inline-block; position: relative; overflow: hidden;
+}
+.water-cups-mini span::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  background: #00bcd4; height: 0%; transition: 0.3s;
+}
+.water-cups-mini span.filled::after { height: 100%; }
+
+main{
+  padding-bottom:0px
+}
+
+/* ===== หน้า บัญชี (Account) ===== */
+.profile-img {
+  width: 80px;
+  height: 80px;
+  background: #e0f7fa;
+  color: #00bcd4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.account-menu {
+  padding: 5px 15px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.menu-item:active {
+  opacity: 0.5;
+}
+.menu-item:last-child {
+  border-bottom: none; /* เอาเส้นขีดล่างของเมนูสุดท้ายออก */
+}
+
+.menu-icon {
+  font-size: 22px;
+  margin-right: 15px;
+  width: 30px;
+  text-align: center;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 16px;
+  color: #333;
+}
+
+.menu-arrow {
+  color: #ccc;
+  font-size: 24px;
+  font-weight: bold;
 }
 
