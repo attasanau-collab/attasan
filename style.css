@@ -1,3 +1,31 @@
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+main {
+  min-height: 100vh;
+  padding-bottom: 160px; /* กันชน bottom nav */
+}
+
+.page {
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* ⭐ กลางแนวนอน */
+}
+
+
+
+
 *{font-family:sans-serif;box-sizing:border-box}
 body{margin:0;background:#f6f6f6}
 
@@ -16,10 +44,14 @@ main{padding-bottom:140px}
 /* CARD */
 .card{
   background:#fff;
-  margin:8px 12px;
+  margin:10px auto;      /* ⭐ จัดกลาง */
   padding:15px;
-  border-radius:22px
+  border-radius:22px;
+
+  width:92%;             /* ⭐ รองรับมือถือ */
+  max-width:420px;       /* ⭐ ไม่ให้ยืดเกิน */
 }
+
 .card:first-child{margin-top:6px}
 .sub{color:#777;font-size:13px}
 
@@ -429,12 +461,13 @@ main{padding-bottom:140px}
 .slider{
   display:flex;
   overflow-x:auto;
+  overflow-y:hidden;        /* ⭐ ตัวแก้หลัก */
   scroll-snap-type:x mandatory;
   -webkit-overflow-scrolling:touch;
 
   /* 🔥 ซ่อน scrollbar */
-  -ms-overflow-style: none;   /* IE / Edge */
-  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* 🔥 Chrome / Safari */
@@ -638,6 +671,7 @@ main{padding-bottom:140px}
 
 body.camera-open{
   overflow:hidden;
+  height:100%;
 }
 
 #cameraPage{
@@ -1232,3 +1266,10 @@ main{
   font-weight: bold;
 }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.page {
+  scroll-behavior: smooth;
+}
