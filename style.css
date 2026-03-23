@@ -1,6 +1,6 @@
 /* ⭐ FIX SCROLL */
 main{
-  padding-bottom:0px !important; /* ดันให้พ้น navbar */
+  padding-bottom:140px !important; /* ดันให้พ้น navbar */
 }
 
 /* กัน body ล้น */
