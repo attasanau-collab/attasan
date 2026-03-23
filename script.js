@@ -25,6 +25,9 @@ window.onload = function(){
   // ⭐ ใส่ค่า goal ตอนโหลด
   document.getElementById("goalCalText").innerText = calorieGoal;
   updateFoodSummary();
+  loadWaterByDate(getLocalDate()); // ⭐ เพิ่มอันนี้
+  generateCups();          // ⭐ เพิ่ม
+  syncCupsFromWater();     // ⭐ เพิ่ม
 }
 
 // ===== GLOBAL VARIABLES =====
@@ -82,13 +85,18 @@ function showPage(id){
   if(id === "diary"){
     highlightDiaryToday();
     generateCups();
+    loadWaterByDate(selectedDate); // ⭐ เพิ่มตัวนี้
     updateDiaryWaterRing();
+
   }
 
   // ⭐ เพิ่มตรงนี้
   if(id === "page3"){
     generateCalendarStrip();
     updateInsights();
+    loadWaterByDate(getLocalDate()); // ⭐ เพิ่ม
+    generateCups(); // ⭐ เพิ่ม
+    syncCupsFromWater(); // ⭐ เพิ่ม
   }
 }
 
@@ -268,25 +276,7 @@ function closeWaterPopup(){
     .style.display = "none";
 }
 
-// ===== รีเซ็ตน้ำ =====
-function resetWater(){
 
-  waterNow = 0;
-
-  document.getElementById("waterNow").innerText =
-    "0 มล.";
-
-  // ล้างแก้ว
-  document
-    .querySelectorAll("#waterCups span")
-    .forEach(c=>{
-      c.classList.remove("fill");
-      c.innerText="＋";
-    });
-
-  generateCups();
-  updateWaterUI();
-}
 
 // ===== บันทึก popup =====
 function saveWater(){
@@ -459,10 +449,13 @@ function loadWaterByDate(date){
   updateWaterUI();
   updateDiaryWaterRing();
 
+  syncCupsFromWater(); // ⭐ เพิ่มตรงนี้
+
   // ⭐ เพิ่มตรงนี้
   document.getElementById("selectedDateText").innerText =
     formatThaiDate(date);
     updateFoodSummary();
+    
 
 
 }
@@ -473,17 +466,19 @@ document.getElementById("selectedDateText").innerText =
 function selectDay(index){
 
   const today = new Date();
-  const day = today.getDay(); // 0-6 (อาทิตย์)
-
-  // map ให้เริ่ม จันทร์
   const map = [1,2,3,4,5,6,0];
 
-  let diff = index - map[day];
+  let diff = index - map[today.getDay()];
 
   const selected = new Date();
   selected.setDate(today.getDate() + diff);
 
-  const dateStr = selected = getLocalDate();
+  // ⭐ แปลง selected เป็น YYYY-MM-DD
+  const year = selected.getFullYear();
+  const month = String(selected.getMonth()+1).padStart(2,'0');
+  const day = String(selected.getDate()).padStart(2,'0');
+
+  const dateStr = `${year}-${month}-${day}`;
 
   loadWaterByDate(dateStr);
 
@@ -2199,3 +2194,23 @@ function logout(){
 }
 
 localStorage.removeItem("user");
+
+function getAverageWater(){
+
+  let total = 0;
+  let days = 0;
+
+  for(let key in localStorage){
+    if(key.startsWith("water_")){
+      total += Number(localStorage.getItem(key)) || 0;
+      days++;
+    }
+  }
+
+  if(days === 0) return 0;
+
+  return Math.round(total / days);
+}
+
+document.getElementById("avgWaterText").innerText =
+  getAverageWater() + " มล.";
