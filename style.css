@@ -1106,11 +1106,14 @@ body.camera-open{
 /* ⭐ แถบวัน ข้อมูลเชิงลึก */
 .calendar-strip{
   display:flex;
-  justify-content:center;  /* ⭐ เอาไปกลาง */
+  justify-content:flex-start;
   gap:10px;
-
-  max-width:360px;         /* ⭐ บีบความกว้าง */
-  margin:10px auto;        /* ⭐ จัดกลาง */
+  width:100%;
+  padding:0 12px;
+  margin:10px 0 12px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  box-sizing:border-box;
 }
 .calendar-strip::-webkit-scrollbar { 
   display: none; /* ซ่อน scrollbar ใน Chrome/Safari */
@@ -1136,9 +1139,17 @@ body.camera-open{
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  padding: 0 15px;
+  padding: 0 12px;
   margin-bottom: 12px;
+  box-sizing: border-box;
 }
+
+.stat-card {
+  padding: 20px 15px;
+  margin: 0 12px 12px 12px;
+  box-sizing: border-box;
+}
+
 .insight-card {
   background: #fff;
   padding: 15px;
@@ -1262,7 +1273,7 @@ main{
 }
 
 #page3{
-  margin-top:-70px;
+  margin-top:0px;
 }
 
 #page4{
