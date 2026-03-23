@@ -1273,7 +1273,11 @@ main{
 }
 
 #page3{
-  margin-top:0px;
+  padding-top:0;
+}
+
+#page3 .calendar-strip{
+  margin-top:-70px; /* ปรับเลขนี้ได้ */
 }
 
 #page4{
