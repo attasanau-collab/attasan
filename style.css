@@ -1,36 +1,25 @@
 html, body {
   height: 100%;
+  margin: 0;
   overflow-x: hidden;
 }
 
-main {
-  min-height: 100vh;
-  padding-bottom: 160px; /* กันชน bottom nav */
-}
-
-.page {
-  min-height: 100vh;
-  overflow-y: auto;
-}
-
-.page {
-  display: none;
-}
-
-.page.active {
+/* โครงหลัก */
+body {
   display: flex;
   flex-direction: column;
-  align-items: center;   /* ⭐ กลางแนวนอน */
 }
 
-
-
+/* main ต้องยืด */
+main {
+  flex: 1;
+  min-height: 100vh;
+  padding-bottom: 90px; /* ⭐ กัน bottom bar ทับ */
+}
 
 *{font-family:sans-serif;box-sizing:border-box}
 body{margin:0;background:#f6f6f6}
 
-/* เผื่อที่ให้ bottom bar */
-main{padding-bottom:140px}
 
 /* HEADER */
 .top{padding:10px 15px;background:#fff}
@@ -38,18 +27,26 @@ main{padding-bottom:140px}
 .top h2{margin:2px 0}
 
 /* PAGE */
-.page { display:none }
-.page.active { display:block }
+.page {
+  display: none;
+  min-height: 100vh;
+  overflow-y:auto;
+  scroll-behavior:smooth;
+}
+
+.page.active {
+  display: block;
+}
 
 /* CARD */
 .card{
   background:#fff;
-  margin:10px auto;      /* ⭐ จัดกลาง */
+  margin:10px auto;
   padding:15px;
   border-radius:22px;
 
-  width:92%;             /* ⭐ รองรับมือถือ */
-  max-width:420px;       /* ⭐ ไม่ให้ยืดเกิน */
+  width:92%;
+  max-width:420px;
 }
 
 .card:first-child{margin-top:6px}
@@ -89,9 +86,12 @@ main{padding-bottom:140px}
 .macro-slider{
   display:flex;
   overflow-x:auto;
+  overflow-y:hidden;      /* ⭐ เพิ่ม */
   scroll-snap-type:x mandatory;
   -webkit-overflow-scrolling:touch;
+  touch-action: pan-x;    /* ⭐ เพิ่ม */
 }
+
 .macro-page{
   min-width:100%;
   display:flex;
@@ -127,15 +127,39 @@ main{padding-bottom:140px}
 
 /* BOTTOM NAV */
 .bottom{
-  position:fixed;bottom:0;width:100%;
-  display:flex;justify-content:space-around;
-  background:#fff;padding:10px 0;border-top:1px solid #ddd
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:70px;                 /* ⭐ เพิ่ม */
+  
+  display:flex;
+  justify-content:space-around;
+  align-items:center;          /* ⭐ เพิ่ม */
+
+  background:#fff;
+  border-top:1px solid #ddd;
+  z-index:1000;
 }
-.bottom button{background:none;border:none;font-size:14px}
+
+.bottom button{
+  background:none;
+  border:none;
+  font-size:14px;
+}
+
+/* ปุ่ม + */
 .plus{
-  background:#000 !important;color:#fff;
-  width:50px;height:50px;border-radius:50%;
-  font-size:24px
+  background:#000 !important;
+  color:#fff;
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  font-size:24px;
+
+  display:flex;                /* ⭐ เพิ่ม */
+  align-items:center;
+  justify-content:center;
 }
 .more:active{
   background:#eee;
@@ -461,13 +485,13 @@ main{padding-bottom:140px}
 .slider{
   display:flex;
   overflow-x:auto;
-  overflow-y:hidden;        /* ⭐ ตัวแก้หลัก */
+  overflow-y:hidden;   /* ⭐ สำคัญ */
   scroll-snap-type:x mandatory;
   -webkit-overflow-scrolling:touch;
+  touch-action: pan-x; /* ⭐ เพิ่มอันนี้ด้วย */
 
-  /* 🔥 ซ่อน scrollbar */
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  -ms-overflow-style:none;
+  scrollbar-width:none;
 }
 
 /* 🔥 Chrome / Safari */
@@ -477,6 +501,7 @@ main{padding-bottom:140px}
 
 .slide{
   min-width:100%;
+  flex-shrink:0;              /* ⭐ ห้ามหาย */
   scroll-snap-align:start;
   text-align:center;
 }
@@ -671,7 +696,6 @@ main{padding-bottom:140px}
 
 body.camera-open{
   overflow:hidden;
-  height:100%;
 }
 
 #cameraPage{
@@ -1209,9 +1233,7 @@ body.camera-open{
 }
 .water-cups-mini span.filled::after { height: 100%; }
 
-main{
-  padding-bottom:0px
-}
+
 
 /* ===== หน้า บัญชี (Account) ===== */
 .profile-img {
@@ -1266,10 +1288,11 @@ main{
   font-weight: bold;
 }
 
-* {
-  -webkit-tap-highlight-color: transparent;
+html, body {
+  height:100%;
+  overflow-x:hidden;
 }
 
-.page {
-  scroll-behavior: smooth;
+body {
+  overflow-y:auto;
 }
