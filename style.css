@@ -1399,3 +1399,9 @@ main:has(#page3.active){
   justify-content:space-between;
   align-items:center;
 }
+
+#page3 .calendar-strip{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
