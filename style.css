@@ -7,7 +7,7 @@ body{margin:0;background:#f6f6f6}
 main{padding-bottom:140px}
 
 /* HEADER */
-.top{padding:10px 15px;background:#fff}
+.top{padding:8px 15px;background:#fff}
 .top small{display:block;margin-bottom:2px}
 .top h2{
   margin:0 !important;
@@ -380,10 +380,13 @@ main{padding-bottom:140px}
 /* ===== Diary Layout ===== */
 
 .diary-week{
-  justify-content:flex-start;
-  gap:8px;
-  margin:10px 12px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+
+  margin-top:8px; /* ⭐ ดึงขึ้น */
 }
+
 
 /* การ์ดน้ำ */
 .diary-water-card{
@@ -946,9 +949,8 @@ body.camera-open{
 }
 
 .calendar-btn{
-  position:absolute;
-  top:25px; /* ปรับได้ */
-  right:20px;
+  position:static;  /* ⭐ สำคัญ */
+  margin-left:6px;
 }
 
 .flatpickr-calendar{
@@ -988,8 +990,8 @@ body.camera-open{
 #selectedDateText{
   display:block;
   text-align:right;
-  margin-top:-260px; /* 🔥 ปรับเลขนี้ได้ */
-  margin-right:60px;
+  margin-top:0px; /* 🔥 ปรับเลขนี้ได้ */
+  margin-right:0px;
 }
 
 .flatpickr-weekday{
@@ -1101,13 +1103,14 @@ body.camera-open{
 }
 
 /* ===== หน้า INSIGHTS (ข้อมูลเชิงลึก) ===== */
-.calendar-strip {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  scrollbar-width: none; /* ซ่อน scrollbar ใน Firefox */
+/* ⭐ แถบวัน ข้อมูลเชิงลึก */
+.calendar-strip{
+  display:flex;
+  justify-content:center;  /* ⭐ เอาไปกลาง */
+  gap:10px;
+
+  max-width:360px;         /* ⭐ บีบความกว้าง */
+  margin:10px auto;        /* ⭐ จัดกลาง */
 }
 .calendar-strip::-webkit-scrollbar { 
   display: none; /* ซ่อน scrollbar ใน Chrome/Safari */
@@ -1268,10 +1271,46 @@ main{
 
 .diary-header{
   display:flex;
-  justify-content:flex-end;
-  padding-top:30px; /* ⭐ ดันลงแบบไม่กระทบ layout มาก */
+  justify-content:flex-end; /* ⭐ ดันไปขวา */
+  align-items:center;
+  gap:8px; /* เว้นระหว่างวันที่กับปุ่ม */
+  margin:6px 12px;
 }
+
+#selectedDateText{
+  margin:0;
+  font-size:14px;
+}
+
+
 
 .calendar-btn{
   margin-top:-6px;
+}
+
+/* 🔥 ลดช่องว่างโซนบน diary */
+.diary-week{
+  margin-top:0;
+  margin-bottom:6px;
+}
+
+/* 🔥 header วันที่ */
+.diary-header{
+  margin:0 12px -40px; /* ชิดขึ้น */
+  padding-top:0;
+}
+
+/* 🔥 การ์ดตัวแรกใน diary */
+#diary .card:first-of-type{
+  margin-top:4px; /* ลดช่องว่างใหญ่ */
+}
+
+#selectedDateText{
+  position:relative;
+  top:-104px;   /* ⭐ ขยับขึ้นเฉพาะข้อความ */
+}
+
+.calendar-btn{
+  position:relative;
+  top:-100px;   /* ⭐ ขยับปุ่มขึ้นตาม */
 }
