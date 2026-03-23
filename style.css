@@ -1315,30 +1315,31 @@ main{
   top:-100px;   /* ⭐ ขยับปุ่มขึ้นตาม */
 }
 
-/* ===== PAGE3 FIX ===== */
+/* ===== FIX เฉพาะหน้า ข้อมูลเชิงลึก ===== */
 
 #page3{
-  padding-top:10px;
+  padding:0 0 100px 0; /* กันโดน navbar ทับ */
 }
 
-/* การ์ดหน้า insights ไม่ให้ลอย */
-#page3 .card{
-  margin-top:10px;
-}
-
-/* ตัวแรกไม่ต้องเว้น */
+/* 🔥 แก้ช่องว่างบน */
 #page3 .card:first-child{
-  margin-top:0;
+  margin-top:6px; /* ให้เหมือน dashboard */
 }
 
-/* แถบวันใน insights */
+/* 🔥 จัด spacing การ์ด */
+#page3 .card{
+  margin:8px 12px;
+}
+
+/* 🔥 แถบวัน (ตัวที่ลอย ๆ ด้านบน) */
 #page3 .week{
-  width:100%;
+  margin:8px 12px 4px;
+  width:auto;
   max-width:100%;
   justify-content:space-between;
 }
 
-/* กัน layout เพี้ยน */
-#page3 *{
-  box-sizing:border-box;
+/* 🔥 กันโดน main ดัน layout */
+main:has(#page3.active){
+  padding-bottom:100px !important;
 }
