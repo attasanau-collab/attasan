@@ -1106,7 +1106,7 @@ body.camera-open{
 /* ⭐ แถบวัน ข้อมูลเชิงลึก */
 .calendar-strip{
   display:flex;
-  justify-content:flex-start;
+  justify-content:center;
   gap:10px;
   width:100%;
   padding:0 12px;
