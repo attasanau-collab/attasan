@@ -1281,7 +1281,8 @@ main{
 }
 
 #page4{
-  margin-top:-75px;
+  padding-bottom:100px; /* กัน navbar */
+  transform: translateY(-75px); /* ⭐ ดันขึ้น */
 }
 
 .diary-header{
@@ -1405,3 +1406,42 @@ main:has(#page3.active){
   display:flex;
   justify-content:center;
 }
+
+/* ===== DESKTOP FIX ของจริง ===== */
+@media (min-width: 1024px){
+
+  /* ไม่แตะ body แล้ว */
+  
+  main{
+    width:100%;
+    max-width:1200px;   /* ⭐ เต็มจอแบบพอดี */
+    margin:0 auto;      /* ⭐ กลางจริง */
+  }
+
+  .top{
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+  /* การ์ดให้เต็มขึ้น */
+  .card{
+    margin:12px 0;
+  }
+
+}
+
+/* ===== FIX page3 + page4 ให้เหมือนหน้าอื่น ===== */
+@media (min-width: 1024px){
+
+  /* ครอบทุกหน้า */
+  #dashboard,
+  #diary,
+  #page3,
+  #page4{
+    width:100%;
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+}
+
