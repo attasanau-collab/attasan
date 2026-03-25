@@ -2198,5 +2198,116 @@ function getAverageWater(){
   return Math.round(total / days);
 }
 
-document.getElementById("avgWaterText").innerText =
-  getAverageWater() + " มล.";
+const avgEl = document.getElementById("avgWaterText");
+if(avgEl){
+  avgEl.innerText = getAverageWater() + " มล.";
+}
+
+  let currentUser = null;
+
+// เปิดเว็บ
+document.addEventListener("DOMContentLoaded", () => {
+  const user = localStorage.getItem("currentUser");
+
+  if(user){
+    startApp();
+  }else{
+    document.getElementById("authPage").style.display = "flex";
+  }
+});
+
+// สมัคร
+async function submitRegister(){
+  const username = regUsername.value;
+  const email = regEmail.value;
+  const password = regPassword.value;
+  const password2 = regPassword2.value;
+
+  if(password !== password2){
+    alert("รหัสไม่ตรง");
+    return;
+  }
+
+  const res = await fetch("/api/register",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ username, password, email })
+  });
+
+  const data = await res.json();
+
+  if(data.message === "สมัครสำเร็จ"){
+    localStorage.setItem("currentUser", username);
+    localStorage.setItem("currentEmail", email);
+
+    startApp(); // ⭐ เข้าเลย
+  }else{
+    alert(data.message);
+  }
+}
+
+// login
+async function login(){
+
+  const usernameInput = document.getElementById("username");
+  const passwordInput = document.getElementById("password");
+
+  const username = usernameInput.value;
+  const password = passwordInput.value;
+
+  const res = await fetch("/api/login",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ username, password })
+  });
+
+  const data = await res.json();
+
+  if(data.success){
+    localStorage.setItem("currentUser", username);
+    localStorage.setItem("currentEmail", data.email);
+    startApp();
+  }else{
+    alert("Login ไม่สำเร็จ");
+  }
+}
+
+// เข้าเว็บ
+function startApp(){
+  document.getElementById("authPage").style.display = "none";
+  document.getElementById("registerPage").style.display = "none";
+
+  updateAccountUI();
+}
+
+// สลับหน้า
+function showRegister(){
+  authPage.style.display = "none";
+  registerPage.style.display = "flex";
+}
+
+function showLogin(){
+  registerPage.style.display = "none";
+  authPage.style.display = "flex";
+}
+
+// logout
+function logout(){
+  localStorage.clear();
+  location.reload();
+}
+
+// แสดงชื่อ
+function updateAccountUI(){
+  const nameEl = document.getElementById("accountName");
+  const mailEl = document.getElementById("accountEmail");
+
+  if(nameEl){
+    nameEl.innerText = localStorage.getItem("currentUser");
+  }
+
+  if(mailEl){
+    mailEl.innerText = localStorage.getItem("currentEmail");
+  }
+}
+

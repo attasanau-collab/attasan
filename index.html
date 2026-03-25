@@ -12,6 +12,35 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 </head>
 <body>
+  <!-- LOGIN -->
+<div id="authPage" class="auth-page">
+  <div class="card">
+    <h2>เข้าสู่ระบบ</h2>
+
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+    <button onclick="showRegister()">สมัครสมาชิก</button>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div id="registerPage" class="auth-page" style="display:none;">
+  <div class="card">
+    <h2>สมัครสมาชิก</h2>
+
+    <input id="regUsername" placeholder="Username">
+    <input id="regEmail" placeholder="Email">
+    <input id="regPassword" type="password" placeholder="Password">
+    <input id="regPassword2" type="password" placeholder="Confirm Password"
+      onkeydown="if(event.key==='Enter') submitRegister()">
+
+    <button onclick="submitRegister()">สมัครสมาชิก</button>
+    <button onclick="showLogin()">กลับไป Login</button>
+  </div>
+</div>
+
     <!-- Popup แก้ไขเป้าหมาย -->
 <div id="goalPopup" class="popup">
   <div class="popup-card">
@@ -582,9 +611,13 @@ style="display:none">
 
   <div class="card profile-card" style="text-align: center; margin-top: 15px; padding-top: 25px;">
     <div class="profile-img">👤</div>
-    <h3 style="margin: 15px 0 5px 0;">ผู้ใช้งานทั่วไป</h3>
-    <div class="sub">user@example.com</div>
-  </div>
+    <h3 style="margin: 15px 0 5px 0;">
+      <span id="accountName">ผู้ใช้งานทั่วไป</span>
+    </h3>
+
+    <div class="sub">
+      <span id="accountEmail">user@example.com</span>
+    </div>
 
   <div class="card account-menu">
     <div class="menu-item" onclick="document.getElementById('goalPopup').style.display='flex'">
